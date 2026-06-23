@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="3.png" />
+    <title>مرحباً بكم في برهـــــوت</title>
+    <style>
+      body {
+        background-color: #000;
+        color: #550000;
+        font-family: "Arial", sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-image: url("2.png");
+        background-size: cover;
+        background-position: center;
+        overflow: hidden; /* لمنع ظهور أشرطة التمرير أثناء الاهتزاز */
+      }
+
+      /* طبقة الشروخ الشفافة */
+      .cracks-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('3.png') center center no-repeat; /* يمكنك استبدال الرابط بملف الشروخ الخاص بك */
+        background-size: cover;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out; /* ظهور تدريجي للشروخ */
+        pointer-events: none; /* عشان ما تعطلش الضغط */
+      }
+
+      button {
+        margin-top: 250px;
+        padding: 15px 30px;
+        font-size: 1.5em;
+        color: #ff0000;
+        background-color: #000;
+        border: 2px solid #ff0000;
+        cursor: pointer;
+        border-radius: 20px;
+        z-index: 2;
+        transition:
+          background-color 0.3s,
+          color 0.3s,
+          opacity 0.5s ease;
+      }
+
+      button:hover {
+        background-color: #ff0000;
+        color: #000;
+      }
+
+      /* نص البوابة المرعب */
+      .horror-text {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ff0000;
+        font-size: 2.2rem;
+        font-weight: bold;
+        text-shadow: 0 0 10px #000, 0 0 20px #ff0000;
+        z-index: 3;
+        opacity: 0;
+        transition: opacity 1s ease-in;
+        text-align: center;
+        pointer-events: none;
+        direction: rtl;
+      }
+
+      /* أنيميشن الاهتزاز (Screen Shake) */
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(0px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(2px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(2px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+      }
+
+      .shake-effect {
+        animation: shake 0.5s;
+        animation-iteration-count: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cracks-layer" id="cracksLayer"></div>
+
+    <audio id="whisper" autoplay loop>
+      <source src="freesound_community-four_voices_whispering-6943.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="wind" autoplay loop>
+      <source src="tanweraman-desert-wind-1-350398.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="amb1" autoplay loop>
+      <source src="thellywellyn-horror-ambience-3-303646.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="amb2" autoplay loop>
+      <source src="universfield-horror-background-atmosphere-08-215794.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="crackSound">
+      <source src="glass-breaking.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div class="horror-text" id="horrorText">لقد تم فتح البوابة...</div>
+
+    <button id="actionBtn">
+      🔥😈 اوعي تدوس
+    </button>
+
+    <script>
+      document.querySelectorAll("audio").forEach((a) => {
+        console.log(a.paused, a.volume, a.currentTime);
+      });
+
+      const button = document.getElementById("actionBtn");
+      const cracksLayer = document.getElementById("cracksLayer");
+      const horrorText = document.getElementById("horrorText");
+      
+      // جلب عناصر الصوت الحالية
+      const whisper = document.getElementById("whisper");
+      const wind = document.getElementById("wind");
+      const amb1 = document.getElementById("amb1");
+      const amb2 = document.getElementById("amb2");
+      const crackSound = document.getElementById("crackSound");
+
+      // تشغيل الأصوات بمجرد أول تفاعل للمستخدم على الصفحة (بسبب سياسة المتصفحات)
+      window.addEventListener('click', () => {
+         document.querySelectorAll("audio").forEach((a) => {
+            if(a.id !== "crackSound" && a.paused) {
+                a.volume = 0.3; // جعل الأصوات خافتة وغموضية في البداية
+                a.play().catch(e => console.log("المتصفح حجب الصوت"));
+            }
+         });
+      }, { once: true });
+
+      button.addEventListener("click", () => {
+        // 1. اهتزاز الشاشة لمدة 0.5 ثانية (بنعمل اهتزاز لـ الـ body)
+        document.body.classList.add('shake-effect');
+        setTimeout(() => {
+          document.body.classList.remove('shake-effect');
+        }, 500);
+
+        // 2. تشغيل صوت التكسير بكامل قوته
+        crackSound.volume = 1.0;
+        crackSound.play();
+
+        // 3. رفع صوت الهمسات والخلفيات المرعبة تدريجياً
+        let currentVol = 0.3;
+        let fadeUp = setInterval(() => {
+          if (currentVol < 1.0) {
+            currentVol += 0.1;
+            whisper.volume = currentVol;
+            amb1.volume = currentVol;
+            amb2.volume = currentVol;
+          } else {
+            clearInterval(fadeUp);
+          }
+        }, 150);
+
+        // 4. ظهور الشروخ تدريجياً فوق الصورة
+        cracksLayer.style.opacity = "1";
+
+        // إخفاء الزرار تدريجياً عشان نمنع الضغط المتكرر وندي مساحة للنص
+        button.style.opacity = "0";
+        setTimeout(() => button.style.display = "none", 500);
+
+        // 5. ظهور نص "لقد تم فتح البوابة..."
+        setTimeout(() => {
+          horrorText.style.opacity = "1";
+        }, 600);
+
+        // 6. الانتقال إلى الرابط الخارجي بعد اكتمال الرعب بـ 3 ثوانٍ
+        setTimeout(() => {
+          window.location.href = 'https://example.com';
+        }, 5000); 
+      });
+    </script>
+  </body>
+</html>
