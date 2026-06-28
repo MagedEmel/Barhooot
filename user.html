@@ -1,53 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>المؤشر - عشيرة الظلام</title>
-    <link rel="stylesheet" href="css/main.css" />
-    <link
-      rel="icon"
-      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
-  </head>
-  <body>
-    <div class="vignette"></div>
-    <div class="noise"></div>
-    <div class="fire-bg">
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-    </div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المؤشر - عشيرة الظلام</title>
+<link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
 
-    <div class="wrap">
-      <h1 id="page-title" class="glitch" data-text="المؤشر">المؤشر</h1>
-      <p class="subtitle" id="user-sub">جاري التحميل...</p>
+</head>
+<body>
 
-      <div class="card fade-in" style="margin-top: 26px">
-        <div class="indicator-wrap">
-          <div class="indicator-track" id="track">
-            <div class="indicator-glow"></div>
-            <div class="indicator-marker" id="marker" style="bottom: 50%"></div>
-          </div>
-          <div class="indicator-label yellow" id="indicator-label">--</div>
+  <div class="vignette"></div>
+  <div class="noise"></div>
+  <div class="fire-bg">
+    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
+    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
+  </div>
+
+  <div class="wrap">
+    <h1 id="page-title" class="glitch" data-text="المؤشر">المؤشر</h1>
+    <p class="subtitle" id="user-sub">جاري التحميل...</p>
+
+    <div class="card fade-in" style="margin-top:26px;">
+      <div class="indicator-wrap">
+        <div class="indicator-track" id="track">
+          <div class="indicator-glow"></div>
+          <div class="indicator-marker" id="marker" style="bottom:50%;"></div>
         </div>
-      </div>
-
-      <div class="center" style="margin-top: 30px">
-        <button id="btn-logout" class="btn ghost">خروج</button>
+        <div class="indicator-label yellow" id="indicator-label">--</div>
+        <div class="score-pill" id="score-pill">السكور: --</div>
       </div>
     </div>
 
-    <audio id="bg-ambience" loop preload="auto" autoplay>
-      <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
-    </audio>
+    <div class="center" style="margin-top:30px;">
+      <button id="btn-logout" class="btn ghost">خروج</button>
+    </div>
+  </div>
 
-    <script type="module" src="js/user.js"></script>
-    <script type="module">
-      import { startAutoUpdateWatcher } from "./js/version-check.js";
-      startAutoUpdateWatcher();
-    </script>
-  </body>
+  <audio id="bg-ambience" loop preload="auto" autoplay>
+    <source src="assets/sounds/ambience.mp3" type="audio/mpeg">
+  </audio>
+
+  <script type="module" src="js/user.js"></script>
+  <script type="module">
+    import { startAutoUpdateWatcher } from "./js/version-check.js";
+    startAutoUpdateWatcher();
+  </script>
+</body>
 </html>

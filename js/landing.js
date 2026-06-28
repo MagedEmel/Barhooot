@@ -12,6 +12,10 @@ const btnContinue   = document.getElementById("btn-continue");
 
 const ambience = document.getElementById("bg-ambience");
 const whispers = document.getElementById("bg-whispers");
+ambience.volume = 0.35;
+whispers.volume = 0.25;
+ambience.play().catch(()=>{});
+whispers.play().catch(()=>{})
 const sfxBreak = document.getElementById("sfx-break");
 
 let usersCache = []; // [{id, name, group, role}]

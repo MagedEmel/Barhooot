@@ -1,5 +1,5 @@
 import {
-  db, doc, getDoc, setDoc, updateDoc, addDoc, collection, getDocs, increment, onSnapshot
+  db, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, getDocs, increment, onSnapshot
 } from "./firebase-config.js";
 
 const gate          = document.getElementById("gate");
@@ -10,6 +10,7 @@ const gateError     = document.getElementById("gate-error");
 const btnLogout     = document.getElementById("btn-logout");
 
 const ambience = document.getElementById("bg-ambience");
+ambience.play().catch(()=>{});
 
 // ------------------------------------------------------------
 // 0) تبويبات
@@ -124,20 +125,75 @@ btnCustomPoints.addEventListener("click", () => {
 const taskTitleInp = document.getElementById("task-title");
 const taskPasswordInp = document.getElementById("task-password");
 const taskContentInp = document.getElementById("task-content");
-const taskOrderInp = document.getElementById("task-order");
+const taskOrderPerGroupDiv = document.getElementById("task-order-per-group");
 const btnAddTask = document.getElementById("btn-add-task");
 const tasksAdminList = document.getElementById("tasks-admin-list");
 
+// بيبني صف فيه "input رقم" لكل عشيرة موجودة، عشان الأدمن يحدد ترتيب المهمة لكل عشيرة لوحدها
+function renderTaskOrderInputs(container, existingOrder = {}) {
+  if (!groupsCache.length) {
+    container.innerHTML = `<p class="muted">لسه مفيش عشائر مُضافة، ضيف مستخدمين/مجموعات الأول.</p>`;
+    return;
+  }
+  container.innerHTML = groupsCache.map(g => `
+    <div class="row">
+      <span class="muted" style="min-width:140px;">${g.id}</span>
+      <input class="input order-for-group" data-group="${g.id}" type="number"
+             placeholder="ترتيب" value="${existingOrder[g.id] ?? ""}">
+    </div>
+  `).join("");
+}
+
+function collectOrderMap(container) {
+  const map = {};
+  container.querySelectorAll(".order-for-group").forEach(inp => {
+    if (inp.value !== "") map[inp.dataset.group] = Number(inp.value);
+  });
+  return map;
+}
+
 async function loadTasksAdmin() {
   const snap = await getDocs(collection(db, "tasks"));
-  const tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    .sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+  const tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-  tasksAdminList.innerHTML = tasks.map(t => `
-    <div class="task-item" style="cursor:default;">
-      <span>${t.order ?? "-"}. ${t.title} <span class="tag">باسورد: ${t.password}</span></span>
-    </div>
-  `).join("") || `<p class="muted">لا توجد مهام بعد.</p>`;
+  tasksAdminList.innerHTML = "";
+  if (!tasks.length) {
+    tasksAdminList.innerHTML = `<p class="muted">لا توجد مهام بعد.</p>`;
+    return;
+  }
+
+  tasks.forEach(t => {
+    const orderObj = (t.order && typeof t.order === "object") ? t.order : {};
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.marginBottom = "14px";
+    card.innerHTML = `
+      <div class="row" style="justify-content:space-between;">
+        <span>${t.title} <span class="tag">باسورد: ${t.password}</span></span>
+        <button class="btn ghost btn-delete-task" style="width:auto;">حذف</button>
+      </div>
+      <p class="muted" style="margin-top:8px;">ترتيب الظهور لكل عشيرة:</p>
+      <div class="grid task-order-edit"></div>
+      <button class="btn btn-save-order" style="margin-top:10px;">حفظ الترتيب</button>
+    `;
+    tasksAdminList.appendChild(card);
+
+    const orderEditDiv = card.querySelector(".task-order-edit");
+    renderTaskOrderInputs(orderEditDiv, orderObj);
+
+    card.querySelector(".btn-save-order").addEventListener("click", async () => {
+      const newOrder = collectOrderMap(orderEditDiv);
+      await updateDoc(doc(db, "tasks", t.id), { order: newOrder });
+      showToast("تم تحديث الترتيب");
+    });
+
+    card.querySelector(".btn-delete-task").addEventListener("click", async () => {
+      if (!confirm(`تأكيد حذف "${t.title}"؟`)) return;
+      await deleteDoc(doc(db, "tasks", t.id));
+      showToast("تم حذف المهمة");
+      loadTasksAdmin();
+    });
+  });
 }
 
 btnAddTask.addEventListener("click", async () => {
@@ -145,13 +201,15 @@ btnAddTask.addEventListener("click", async () => {
     showToast("اكتب العنوان والباسورد على الأقل");
     return;
   }
+  const order = collectOrderMap(taskOrderPerGroupDiv);
   await addDoc(collection(db, "tasks"), {
     title: taskTitleInp.value,
     password: taskPasswordInp.value,
     content: taskContentInp.value,
-    order: Number(taskOrderInp.value) || 0
+    order // مابّة: { "اسم العشيرة": رقم_الترتيب, ... }
   });
-  taskTitleInp.value = ""; taskPasswordInp.value = ""; taskContentInp.value = ""; taskOrderInp.value = "";
+  taskTitleInp.value = ""; taskPasswordInp.value = ""; taskContentInp.value = "";
+  renderTaskOrderInputs(taskOrderPerGroupDiv);
   showToast("تمت إضافة المهمة");
   loadTasksAdmin();
 });
@@ -198,7 +256,8 @@ btnAddUser.addEventListener("click", async () => {
   userNameInp.value = ""; userGroupInp.value = "";
   showToast("تمت إضافة المستخدم");
   loadUsersAdmin();
-  loadGroups();
+  await loadGroups();
+  renderTaskOrderInputs(taskOrderPerGroupDiv);
 });
 
 // ------------------------------------------------------------
@@ -265,6 +324,7 @@ async function initPanel() {
   fillSettingsForm();
   renderShapeButtons();
   await loadGroups();
+  renderTaskOrderInputs(taskOrderPerGroupDiv);
   await loadTasksAdmin();
   await loadUsersAdmin();
 }

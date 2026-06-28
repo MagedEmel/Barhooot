@@ -1,5 +1,9 @@
 import { db, doc, getDoc, onSnapshot, collection, getDocs } from "./firebase-config.js";
 
+const ambience = document.getElementById("bg-ambience");
+ambience.volume = 0.3;
+ambience.play().catch(()=>{});
+
 const subEl       = document.getElementById("user-sub");
 const markerEl    = document.getElementById("marker");
 const labelEl     = document.getElementById("indicator-label");
@@ -82,7 +86,18 @@ async function loadTasks() {
   try {
     const snap = await getDocs(collection(db, "tasks"));
     let tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    tasks.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+
+    // الترتيب بيكون مختلف لكل عشيرة: order هو Object زي { "اسم العشيرة": رقم }
+    // لو المهمة قديمة وكان order رقم عادي (مش object)، بنستخدمه كـ fallback لكل العشائر
+    function orderFor(task) {
+      if (task.order && typeof task.order === "object") {
+        const v = task.order[me.group];
+        return v === undefined ? Infinity : v; // لو معمول لها ترتيب لعشيرتنا نستخدمه، غير كذا تنزل لتحت
+      }
+      return typeof task.order === "number" ? task.order : Infinity;
+    }
+
+    tasks.sort((a, b) => orderFor(a) - orderFor(b));
 
     tasksList.innerHTML = "";
     tasks.forEach(task => {

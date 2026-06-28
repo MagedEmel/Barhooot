@@ -1,4 +1,7 @@
 import { db, doc, getDoc, onSnapshot } from "./firebase-config.js";
+const ambience = document.getElementById("bg-ambience");
+ambience.volume = 0.3;
+ambience.play().catch(()=>{});
 
 const subEl       = document.getElementById("user-sub");
 const markerEl    = document.getElementById("marker");
@@ -48,8 +51,9 @@ async function init() {
     console.error("خطأ في تتبع السكور:", err);
   });
 }
-/*
+
 function updateIndicator(score, greenThreshold, redThreshold) {
+  scorePillEl.textContent = `السكور: ${score}`;
 
   let color, percent;
   if (score >= greenThreshold) {
@@ -71,5 +75,5 @@ function updateIndicator(score, greenThreshold, redThreshold) {
   labelEl.className = "indicator-label " + color;
   markerEl.style.bottom = percent + "%";
 }
-*/
+
 init();
