@@ -1,295 +1,82 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="3.png" />
-    <title>مرحباً بكم في برهـــــوت</title>
-    <style>
-      /* شاشة الانترو السوداء المبدئية */
-      #intro-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #050000;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        transition: opacity 1.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
-      }
-
-      /* طبقة وميض النار */
-      #fire-burst {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 69, 0, 0.85) 0%,
-          rgba(139, 0, 0, 0.65) 50%,
-          rgba(0, 0, 0, 0) 100%
-        );
-        z-index: 9998;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s ease;
-        mix-blend-mode: screen;
-      }
-
-      .intro-btn {
-        padding: 15px 40px;
-        font-size: 1.8em;
-        color: #ff0000;
-        background: transparent;
-        border: 2px solid #550000;
-        cursor: pointer;
-        box-shadow: 0 0 15px #550000;
-        text-shadow: 0 0 5px #000;
-        border-radius: 5px;
-        transition: 0.3s;
-      }
-
-      .intro-btn:hover {
-        border-color: #ff0000;
-        box-shadow: 0 0 25px #ff0000;
-        transform: scale(1.05);
-      }
-
-      body {
-        background-color: #000;
-        color: #550000;
-        font-family: "Arial", sans-serif;
-        height: 100vh;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-image: url("2.png");
-        background-size: cover;
-        background-position: center;
-        overflow: hidden;
-      }
-
-      .cracks-layer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url("https://i.ibb.co/6w4n0G3/cracks.png") center center no-repeat;
-        background-size: cover;
-        z-index: 1;
-        opacity: 0;
-        transition: opacity 1.5s ease-in-out;
-        pointer-events: none;
-      }
-
-      button#actionBtn {
-        margin-top: 250px;
-        padding: 15px 30px;
-        font-size: 1.5em;
-        color: #ff0000;
-        background-color: #000;
-        border: 2px solid #ff0000;
-        cursor: pointer;
-        border-radius: 20px;
-        z-index: 2;
-        transition:
-          background-color 0.3s,
-          color 0.3s,
-          opacity 0.5s ease;
-      }
-
-      button#actionBtn:hover {
-        background-color: #ff0000;
-        color: #000;
-      }
-
-      /* نص البوابة مركب فوق كل الطبقات عشان يفضل واضح */
-      .horror-text {
-        width: 100%;
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #ff0000;
-        font-size: 2.2rem;
-        font-weight: bold;
-        text-shadow:
-          0 0 10px #000,
-          0 0 20px #ff0000;
-        z-index: 1005; /* أعلى من الصورة المرعبة عشان يبان فوقها */
-        opacity: 0;
-        transition: opacity 1s ease-in;
-        text-align: center;
-        pointer-events: none;
-        direction: ltr;
-      }
-
-      /* أنيميشن الاهتزاز العنيف المستمر لغلاف الانترو */
-      @keyframes continuous-shake {
-        0% { transform: translate(2px, 2px) rotate(0deg); }
-        10% { transform: translate(-2px, -3px) rotate(-1deg); }
-        20% { transform: translate(-4px, 0px) rotate(2deg); }
-        30% { transform: translate(0px, 4px) rotate(0deg); }
-        40% { transform: translate(2px, -2px) rotate(1deg); }
-        50% { transform: translate(-2px, 3px) rotate(-2deg); }
-        60% { transform: translate(-4px, 2px) rotate(0deg); }
-        70% { transform: translate(3px, 2px) rotate(-1deg); }
-        80% { transform: translate(-2px, -2px) rotate(2deg); }
-        90% { transform: translate(3px, 3px) rotate(0deg); }
-        100% { transform: translate(2px, -3px) rotate(-1deg); }
-      }
-
-      .intro-shake {
-        animation: continuous-shake 0.3s infinite;
-      }
-
-      .shake-effect {
-        animation: continuous-shake 0.2s infinite;
-      }
-
-      /* طبقة الصورة المرعبة (Jumpscare) تظهر تدريجياً وبشكل مخيف */
-      #jumpscareLayer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url("3.png") center center no-repeat;
-        background-size: cover;
-        z-index: 1000; /* تحت النص وفوق بقية محتوى الصفحة */
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* تأثير ظهور تدريجي ومرعب */
-      }
-    </style>
+    <title>عشيرة الظلام</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
   </head>
   <body>
-    <div id="intro-overlay">
-      <button class="intro-btn" onclick="startExperience()">
-        😈🔥ادخِلْ بَوَّابَة بَرهُوت...
-      </button>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+    <div class="fire-bg">
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
     </div>
 
-    <div id="fire-burst"></div>
-    <div id="jumpscareLayer"></div>
-    <div class="cracks-layer" id="cracksLayer"></div>
+    <div class="wrap">
+      <!-- شاشة اختيار الاسم -->
+      <section id="screen-select" class="fade-in">
+        <h1 class="glitch" data-text="من تكون...؟">من تكون...؟</h1>
+        <p class="subtitle">قل اسمك تحت أنظار العشيرة</p>
 
-    <audio id="whisper" loop preload="none"></audio>
-    <audio id="wind" loop preload="none"></audio>
-    <audio id="amb1" loop preload="none"></audio>
-    <audio id="amb2" loop preload="none"></audio>
-    <audio id="crackSound" preload="none"></audio>
+        <div class="card" style="margin-top: 30px">
+          <label class="muted">اسمك</label>
+          <input
+            list="names-list"
+            id="name-input"
+            class="input"
+            placeholder="اكتب اسمك..."
+            autocomplete="off" />
+          <datalist id="names-list"></datalist>
 
-    <div class="horror-text" id="horrorText"> 🔥لقد تم فتح البـــوابـــة</div>
+          <button id="btn-enter" class="btn" disabled>ادخل إن كنت تجرؤ</button>
+          <p
+            id="error-msg"
+            class="muted hidden"
+            style="color: #ff5a5a; text-align: center; margin-top: 10px"></p>
+        </div>
+      </section>
 
-    <button id="actionBtn">🔥😈 اوعي تدوس</button>
+      <!-- شاشة الرسالة المرعبة -->
+      <section id="screen-welcome" class="hidden">
+        <div class="card center fade-in" style="margin-top: 60px">
+          <p class="muted">صوت يهمس من العتمة...</p>
+          <h2
+            class="glitch"
+            id="welcome-text"
+            data-text=""
+            style="margin-top: 18px"></h2>
+          <p
+            class="muted"
+            id="group-name"
+            style="margin-top: 10px; font-size: 18px"></p>
+          <div class="spacer"></div>
+          <button id="btn-continue" class="btn">تابع إلى الداخل</button>
+        </div>
+      </section>
+    </div>
 
-    <script>
-      const overlay = document.getElementById("intro-overlay");
-      const fireBurst = document.getElementById("fire-burst");
-      const button = document.getElementById("actionBtn");
-      const cracksLayer = document.getElementById("cracksLayer");
-      const horrorText = document.getElementById("horrorText");
-      const jumpscareLayer = document.getElementById("jumpscareLayer");
+    <!-- صوت الخلفية: حط ملفاتك الصوتية في assets/sounds/ -->
+    <audio id="bg-ambience" loop preload="auto">
+      <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="bg-whispers" loop preload="auto">
+      <source src="assets/sounds/whispers.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sfx-break" preload="auto">
+      <source src="assets/sounds/break.mp3" type="audio/mpeg" />
+    </audio>
 
-      const whisper = document.getElementById("whisper");
-      const wind = document.getElementById("wind");
-      const amb1 = document.getElementById("amb1");
-      const amb2 = document.getElementById("amb2");
-      const crackSound = document.getElementById("crackSound");
-
-      // دالة الدخول واختفاء الانترو
-      function startExperience() {
-        fireBurst.style.opacity = "1";
-        document.body.classList.add("intro-shake");
-
-        overlay.style.opacity = "0";
-
-        whisper.src = "freesound_community-four_voices_whispering-6943.mp3";
-        wind.src = "tanweraman-desert-wind-1-350398.mp3";
-        amb1.src = "thellywellyn-horror-ambience-3-303646.mp3";
-        amb2.src = "universfield-horror-background-atmosphere-08-215794.mp3";
-
-        [whisper, wind, amb1, amb2].forEach((track) => {
-          track.volume = 0.05;
-          track.play().catch((e) => console.log("بانتظار تفاعل أعمق"));
-        });
-
-        setTimeout(() => {
-          fireBurst.style.opacity = "0.3";
-        }, 500);
-
-        setTimeout(() => {
-          overlay.style.display = "none";
-          fireBurst.style.opacity = "0";
-          document.body.classList.remove("intro-shake");
-
-          let vol = 0.05;
-          let fadeToMedium = setInterval(() => {
-            if (vol < 0.35) {
-              vol += 0.05;
-              whisper.volume = vol;
-              wind.volume = vol;
-              amb1.volume = vol;
-              amb2.volume = vol;
-            } else {
-              clearInterval(fadeToMedium);
-            }
-          }, 100);
-        }, 1500);
-      }
-
-      // عند ضغط "أوعى تدوس" (كل الإجراءات مدمجة هنا بشكل سليم)
-      button.addEventListener("click", () => {
-        // 1. تفعيل الاهتزاز اللانهائي للشاشة
-        document.body.classList.add("shake-effect");
-
-        // 2. إظهار الصورة المرعبة تدريجياً
-        jumpscareLayer.style.opacity = "1";
-
-        // 3. تشغيل صوت التكسير
-        crackSound.src = "glass-breaking.mp3";
-        crackSound.volume = 1.0;
-        crackSound.play();
-
-        // 4. تعلية الأصوات لأقصى درجة
-        let currentVol = 0.35;
-        let fadeToMax = setInterval(() => {
-          if (currentVol < 1.0) {
-            currentVol += 0.1;
-            whisper.volume = currentVol;
-            wind.volume = currentVol;
-            amb1.volume = currentVol;
-            amb2.volume = currentVol;
-          } else {
-            clearInterval(fadeToMax);
-          }
-        }, 100);
-
-        // 5. إظهار الشروخ وإخفاء الزرار
-        cracksLayer.style.opacity = "1";
-        button.style.opacity = "0";
-        setTimeout(() => (button.style.display = "none"), 500);
-
-        // 6. إظهار جملة "لقد تم فتح البوابة..." لتظهر فوق الصورة بشكل مرعب
-        setTimeout(() => {
-          horrorText.style.opacity = "1";
-        }, 400);
-
-        // 7. النقل النهائي للرابط بعد انتهاء المشهد بالكامل
-        setTimeout(() => {
-          window.location.href = "https://example.com";
-        }, 3500);
-      });
+    <script type="module" src="js/landing.js"></script>
+    <script type="module">
+      import { startAutoUpdateWatcher } from "./js/version-check.js";
+      startAutoUpdateWatcher();
     </script>
   </body>
 </html>

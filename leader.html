@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الليدر - عشيرة الظلام</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link
+      rel="icon"
+      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+  </head>
+  <body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+    <div class="fire-bg">
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+    </div>
+
+    <div class="wrap">
+      <h1 class="glitch" data-text="المؤشر">المؤشر</h1>
+      <p class="subtitle" id="user-sub">جاري التحميل...</p>
+
+      <div class="card fade-in" style="margin-top: 26px">
+        <div class="indicator-wrap">
+          <div class="indicator-track" id="track">
+            <div class="indicator-glow"></div>
+            <div class="indicator-marker" id="marker" style="bottom: 50%"></div>
+          </div>
+          <div class="indicator-label yellow" id="indicator-label">--</div>
+          <div class="score-pill" id="score-pill">السكور: --</div>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 50px">المهام (تاسكات)</h2>
+      <p class="muted">
+        كل مهمة مقفولة بباسورد منفصل. اضغط عليها وادخل الباسورد عشان تتفك.
+      </p>
+
+      <div id="tasks-list" style="margin-top: 18px"></div>
+
+      <div class="center" style="margin-top: 30px">
+        <button id="btn-logout" class="btn ghost">خروج</button>
+      </div>
+    </div>
+
+    <!-- مودال الباسورد -->
+    <div
+      id="modal-overlay"
+      class="hidden"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+      <div class="card" style="max-width: 380px; width: 90%">
+        <h2 id="modal-title">أدخل الباسورد</h2>
+        <input
+          id="modal-password"
+          type="password"
+          class="input"
+          placeholder="الباسورد..."
+          style="margin-top: 12px" />
+        <p
+          id="modal-error"
+          class="muted hidden"
+          style="color: #ff5a5a; margin-top: 8px">
+          باسورد غلط، حاول تاني.
+        </p>
+        <div class="row" style="margin-top: 14px">
+          <button id="modal-cancel" class="btn ghost">إغلاق</button>
+          <button id="modal-submit" class="btn">فتح</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- مودال عرض المحتوى المفتوح -->
+    <div
+      id="content-overlay"
+      class="hidden"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+      <div class="card" style="max-width: 480px; width: 90%">
+        <h2 id="content-title"></h2>
+        <p
+          id="content-body"
+          style="margin-top: 14px; white-space: pre-wrap"></p>
+        <button id="content-close" class="btn" style="margin-top: 14px">
+          إغلاق
+        </button>
+      </div>
+    </div>
+
+    <audio id="bg-ambience" loop preload="auto" autoplay>
+      <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sfx-unlock" preload="auto">
+      <source src="assets/sounds/unlock.mp3" type="audio/mpeg" />
+    </audio>
+
+    <script type="module" src="js/leader.js"></script>
+    <script type="module">
+      import { startAutoUpdateWatcher } from "./js/version-check.js";
+      startAutoUpdateWatcher();
+    </script>
+  </body>
+</html>

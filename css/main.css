@@ -1,0 +1,289 @@
+/* ============================================================
+   عشيرة الظلام - الثيم العام (أحمر / أسود / نار)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nosifer&family=Cinzel:wght@400;600;800&family=EB+Garamond:ital@0;1&display=swap');
+
+:root{
+  --black-0: #050203;
+  --black-1: #0c0608;
+  --black-2: #150a0c;
+  --blood: #8a0303;
+  --blood-bright: #c81414;
+  --ember: #ff5a1f;
+  --ember-soft: #ff8a3d;
+  --ash: #8a8385;
+  --bone: #e9dfd6;
+  --glow: 0 0 12px rgba(200,20,20,.65);
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; min-height:100%; }
+
+body{
+  background: radial-gradient(ellipse at 50% 110%, #2a0506 0%, var(--black-1) 45%, var(--black-0) 100%);
+  color: var(--bone);
+  font-family: 'EB Garamond', serif;
+  font-size: 19px;
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* -------------------- ضباب/فينييت -------------------- */
+.vignette{
+  position: fixed; inset:0; pointer-events:none; z-index: 5;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.75) 100%);
+  mix-blend-mode: multiply;
+}
+
+.noise{
+  position:fixed; inset:0; pointer-events:none; z-index:4; opacity:.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* -------------------- النار في الخلفية (CSS فقط) -------------------- */
+.fire-bg{
+  position: fixed;
+  bottom: -6vh; left: 0; right: 0;
+  height: 38vh;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(1px);
+}
+.flame{
+  position:absolute;
+  bottom: 0;
+  width: 18vw;
+  height: 100%;
+  border-radius: 50% 50% 20% 20%;
+  background: radial-gradient(circle at 50% 100%, var(--ember) 0%, var(--blood-bright) 35%, var(--blood) 60%, transparent 80%);
+  opacity:.55;
+  animation: flicker 2.6s infinite ease-in-out;
+  mix-blend-mode: screen;
+}
+.flame:nth-child(1){ left:-4vw; animation-delay:0s; transform:scale(1.1);}
+.flame:nth-child(2){ left:12vw; animation-delay:.4s; transform:scale(.8);}
+.flame:nth-child(3){ left:28vw; animation-delay:.9s; transform:scale(1.3);}
+.flame:nth-child(4){ left:48vw; animation-delay:.2s; transform:scale(.9);}
+.flame:nth-child(5){ left:64vw; animation-delay:.7s; transform:scale(1.15);}
+.flame:nth-child(6){ left:80vw; animation-delay:1.1s; transform:scale(1);}
+
+@keyframes flicker{
+  0%,100%{ transform: scaleY(1) scaleX(1) translateY(0); opacity:.45; }
+  25%{ transform: scaleY(1.15) scaleX(.92) translateY(-2%); opacity:.65; }
+  50%{ transform: scaleY(.92) scaleX(1.08) translateY(1%); opacity:.5; }
+  75%{ transform: scaleY(1.08) scaleX(.96) translateY(-1%); opacity:.7; }
+}
+
+/* -------------------- محتوى عام -------------------- */
+.wrap{
+  position: relative;
+  z-index: 10;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 22px 90px;
+  min-height: 100vh;
+}
+
+h1,h2,h3,.title-font{
+  font-family: 'Nosifer', 'Cinzel', serif;
+  color: var(--blood-bright);
+  text-shadow: 0 0 4px #000, var(--glow);
+  letter-spacing: 1px;
+}
+
+h1{ font-size: clamp(28px, 6vw, 46px); text-align:center; line-height:1.4; }
+h2{ font-size: clamp(20px, 4vw, 28px); }
+
+p, label, span, div { line-height: 1.7; }
+
+.subtitle{
+  font-family:'Cinzel', serif;
+  color: var(--ash);
+  text-align:center;
+  letter-spacing: 2px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+a{ color: var(--ember-soft); text-decoration:none; }
+
+/* -------------------- كروت / صناديق -------------------- */
+.card{
+  background: linear-gradient(160deg, var(--black-2), var(--black-1));
+  border: 1px solid rgba(138,3,3,.5);
+  border-radius: 10px;
+  padding: 26px 22px;
+  box-shadow: 0 0 30px rgba(0,0,0,.6), inset 0 0 40px rgba(138,3,3,.08);
+  position: relative;
+}
+.card::before{
+  content:'';
+  position:absolute; inset:0; border-radius:10px; pointer-events:none;
+  box-shadow: 0 0 0 1px rgba(255,90,31,.08);
+}
+
+/* -------------------- نموذج / مدخلات -------------------- */
+input, select, button, textarea{
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+}
+
+.input, select.input{
+  width:100%;
+  padding: 14px 16px;
+  background: var(--black-0);
+  border: 1px solid var(--blood);
+  color: var(--bone);
+  border-radius: 6px;
+  outline:none;
+  transition: box-shadow .25s, border-color .25s;
+}
+.input:focus{
+  border-color: var(--ember);
+  box-shadow: var(--glow);
+}
+.input::placeholder{ color:#5e4a4a; }
+
+.btn{
+  display:inline-block;
+  cursor:pointer;
+  width:100%;
+  padding: 14px 20px;
+  margin-top: 14px;
+  background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+  color: var(--bone);
+  border: 1px solid #460101;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  transition: transform .15s, box-shadow .25s, filter .2s;
+}
+.btn:hover{ box-shadow: 0 0 20px rgba(200,20,20,.8); filter:brightness(1.15); transform: translateY(-1px); }
+.btn:active{ transform: translateY(1px) scale(.99); }
+.btn.secondary{
+  background: linear-gradient(180deg, #1c1c1c, #0d0d0d);
+  border-color: #3a3a3a;
+}
+.btn.ghost{
+  background: transparent;
+  border: 1px solid var(--blood);
+}
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* -------------------- نص الدخول المرعب -------------------- */
+.glitch{
+  position: relative;
+  display:inline-block;
+}
+.glitch::before, .glitch::after{
+  content: attr(data-text);
+  position:absolute; left:0; top:0; width:100%;
+  opacity:.6;
+}
+.glitch::before{ color: var(--ember); transform: translate(2px,0); clip-path: inset(0 0 60% 0); animation: glitch1 2.4s infinite; }
+.glitch::after{ color: #4a0000; transform: translate(-2px,0); clip-path: inset(60% 0 0 0); animation: glitch2 3.1s infinite; }
+@keyframes glitch1{ 0%,90%,100%{ transform:translate(2px,0);} 92%{ transform:translate(-3px,1px);} 94%{ transform:translate(3px,-1px);} }
+@keyframes glitch2{ 0%,90%,100%{ transform:translate(-2px,0);} 91%{ transform:translate(3px,-1px);} 95%{ transform:translate(-3px,1px);} }
+
+.fade-in{ animation: fadeIn 1.1s ease both; }
+@keyframes fadeIn{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform:none; } }
+
+.hidden{ display:none !important; }
+
+/* -------------------- المؤشر (Indicator) -------------------- */
+.indicator-wrap{
+  display:flex; flex-direction: column; align-items:center; gap: 22px;
+  margin-top: 30px;
+}
+.indicator-track{
+  width: 90px; height: 320px;
+  border-radius: 50px;
+  background: linear-gradient(to top, #6e0808 0%, #6e0808 33%, #8a6d08 33%, #8a6d08 66%, #0e5e1c 66%, #0e5e1c 100%);
+  position: relative;
+  border: 2px solid #000;
+  box-shadow: inset 0 0 25px rgba(0,0,0,.7), 0 0 25px rgba(200,20,20,.3);
+  overflow: hidden;
+}
+.indicator-glow{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,.35);
+}
+.indicator-marker{
+  position:absolute;
+  left:-10px; right:-10px;
+  height: 14px;
+  background: var(--bone);
+  border-radius: 4px;
+  box-shadow: 0 0 18px 4px #fff, 0 0 30px 8px var(--ember);
+  transition: bottom 1.1s cubic-bezier(.4,0,.2,1);
+}
+.indicator-label{
+  font-family:'Cinzel',serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  font-weight: 800;
+}
+.indicator-label.red{ color:#ff3b3b; text-shadow:0 0 14px #ff0000; }
+.indicator-label.yellow{ color:#ffd23b; text-shadow:0 0 14px #ffae00; }
+.indicator-label.green{ color:#37e25c; text-shadow:0 0 14px #14b53a; }
+
+.score-pill{
+  font-family:'Cinzel',serif;
+  background: var(--black-0);
+  border:1px solid var(--blood);
+  border-radius: 30px;
+  padding: 6px 18px;
+  font-size: 14px;
+  color: var(--ash);
+}
+
+/* -------------------- جداول/قوائم الأدمن -------------------- */
+table{ width:100%; border-collapse: collapse; margin-top: 10px; }
+th,td{ padding: 10px 8px; border-bottom: 1px solid rgba(138,3,3,.35); text-align:right; font-family:'Cinzel',serif; font-size:14px;}
+th{ color: var(--ember-soft); text-transform:uppercase; letter-spacing:1px; font-size:12px;}
+
+.grid{ display:grid; gap: 14px; }
+.grid-3{ grid-template-columns: repeat(3,1fr); }
+@media (max-width: 640px){ .grid-3{ grid-template-columns: 1fr; } }
+
+.tag{
+  display:inline-block; font-size:12px; padding:3px 10px; border-radius:20px;
+  border:1px solid var(--blood); color: var(--ash); font-family:'Cinzel',serif;
+}
+
+.toast{
+  position: fixed; bottom: 20px; left:50%; transform:translateX(-50%);
+  background: var(--black-0); border:1px solid var(--blood-bright);
+  padding: 12px 22px; border-radius: 8px; z-index: 999;
+  box-shadow: var(--glow);
+  font-family:'Cinzel',serif; font-size:14px;
+  animation: fadeIn .3s ease;
+}
+
+.task-item{
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 14px; margin-bottom:10px; border-radius:8px;
+  background: var(--black-0); border:1px solid rgba(138,3,3,.4);
+  cursor:pointer; transition: border-color .2s, box-shadow .2s;
+}
+.task-item:hover{ border-color: var(--ember); box-shadow: var(--glow); }
+.task-item.unlocked{ border-color:#0e5e1c; }
+.lock-icon{ font-size:20px; }
+
+.center{ text-align:center; }
+.muted{ color: var(--ash); font-size:14px; }
+.row{ display:flex; gap:10px; align-items:center; }
+.spacer{ height: 18px; }
+
+/* شريط تحديث جديد */
+#update-banner{
+  position: fixed; top:0; left:0; right:0; z-index: 1000;
+  background: var(--blood-bright); color:#fff; text-align:center;
+  padding: 10px; font-family:'Cinzel',serif; letter-spacing:1px;
+  box-shadow: 0 0 20px rgba(0,0,0,.6);
+  cursor:pointer;
+}
