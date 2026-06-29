@@ -35,9 +35,10 @@ let selectedUser = null;
 const remembered = localStorage.getItem("clan_user");
 
 if (remembered) {
-  selectedUser = JSON.parse(remembered);
-  sessionStorage.setItem("clan_user", remembered);
-  showWelcome(selectedUser);
+  // selectedUser = JSON.parse(remembered);
+  // sessionStorage.setItem("clan_user", remembered);
+  // showWelcome(selectedUser);
+  loadNames();
 } else {
   loadNames();
 }
