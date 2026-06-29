@@ -3,68 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>عشيرة الظلام</title>
+    <title>عشيرة برهوت</title>
     <link rel="stylesheet" href="css/main.css" />
-    <link
-      rel="icon"
-      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+    <link rel="icon" href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
   </head>
   <body>
     <div class="vignette"></div>
     <div class="noise"></div>
     <div class="fire-bg">
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
-      <div class="flame"></div>
+      <div class="flame"></div><div class="flame"></div><div class="flame"></div>
+      <div class="flame"></div><div class="flame"></div><div class="flame"></div>
     </div>
 
     <div class="wrap">
       <!-- شاشة اختيار الاسم -->
       <section id="screen-select" class="fade-in">
-        <h1 class="glitch" data-text="من تكون...؟">من تكون...؟</h1>
+        <h1 data-text="من تكون...؟">من تكون...؟</h1>
         <p class="subtitle">قل اسمك تحت أنظار العشيرة</p>
 
         <div class="card" style="margin-top: 30px">
           <label class="muted">اسمك</label>
           <input
-            list="names-list"
             id="name-input"
             class="input"
             placeholder="اكتب اسمك..."
-            autocomplete="off" />
-          <datalist id="names-list"></datalist>
+            autocomplete="off"
+            style="margin-top:8px;" />
+          <div id="name-suggestions" class="suggestions hidden"></div>
 
-          <button id="btn-enter" class="btn" disabled>ادخل إن كنت تجرؤ</button>
-          <p
-            id="error-msg"
-            class="muted hidden"
-            style="color: #ff5a5a; text-align: center; margin-top: 10px"></p>
+          <button id="btn-enter" class="btn" disabled>ادخل</button>
+          <p id="error-msg" class="muted hidden" style="color:var(--crimson); text-align:center; margin-top:10px;"></p>
         </div>
       </section>
 
-      <!-- شاشة الرسالة المرعبة -->
+      <!-- شاشة الرسالة -->
       <section id="screen-welcome" class="hidden">
-        <div class="card center fade-in" style="margin-top: 60px">
+        <div class="card center fade-in" style="margin-top:60px;">
           <p class="muted">صوت يهمس من العتمة...</p>
-          <h2
-            class="glitch"
-            id="welcome-text"
-            data-text=""
-            style="margin-top: 18px"></h2>
-          <p
-            class="muted"
-            id="group-name"
-            style="margin-top: 10px; font-size: 18px"></p>
+          <h2 id="welcome-text" data-text="" style="margin-top:18px;"></h2>
+          <p class="muted" id="group-name" style="margin-top:10px; font-size:17px;"></p>
           <div class="spacer"></div>
           <button id="btn-continue" class="btn">تابع إلى الداخل</button>
         </div>
       </section>
     </div>
 
-    <!-- صوت الخلفية: حط ملفاتك الصوتية في assets/sounds/ -->
+    <!-- بوب أب تأكيد الاسم -->
+    <div id="confirm-overlay" class="hidden overlay-fade" style="position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px;">
+      <div class="card reveal-pop" style="max-width:400px; width:100%; text-align:center;">
+        <h2 style="margin-top:0;">لا يوجد رجوع بعد الآن</h2>
+        <p style="margin-top:14px; font-size:17px;">هل أنت متأكد من اسمك يا <span id="confirm-name" style="color:var(--glow); font-weight:bold;"></span>؟</p>
+        <p class="muted" style="margin-top:8px;">اختيار اسم غلط هيوقعك في عشيرة مش عشيرتك، وده بعد كذا مالوش رجوع.</p>
+        <div class="row" style="margin-top:20px;">
+          <button id="confirm-back" class="btn ghost">رجوع</button>
+          <button id="confirm-yes" class="btn">متأكد، أنا هو</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- صوت الخلفية -->
     <audio id="bg-ambience" loop preload="auto" autoplay>
       <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
     </audio>

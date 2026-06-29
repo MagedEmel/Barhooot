@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>عشيرة برهوت – المؤتمر ٢٠٢٥</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap');
+:root{
+  --black:#04040a;--deep:#0a0a14;--ash:#13131e;--card:#181825;
+  --bone:#c8bfa8;--sand:#e8dcc8;--ember:#c4752a;--glow:#e8943a;
+  --crimson:#ff3333;--green:#22c55e;--fog:#4a4a6a;--mist:#7a7a9a;
+  --t1:#c4752a;--t2:#2a6b8b;--t3:#8b2a6b;--t4:#2a8b4a;--gold:#FFD700;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--bone);font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;overscroll-behavior:none;}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;animation:pfloat linear infinite;opacity:0;}
+@keyframes pfloat{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-10vh) translateX(20px);opacity:0;}}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ===== SPLASH ===== */
+#splash{align-items:center;justify-content:flex-start;padding:2.5rem 1.5rem 2rem;background:radial-gradient(ellipse at 50% 30%,#1f0a0a 0%,#04040a 65%);}
+
+.well-svg{width:100px;height:100px;margin:0 auto 1.2rem;display:block;filter:drop-shadow(0 0 25px rgba(196,117,42,.6));animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 18px rgba(196,117,42,.4));}50%{filter:drop-shadow(0 0 40px rgba(196,117,42,.9));}}
+
+.splash-title{font-family:'Amiri',serif;font-size:3rem;font-weight:700;color:var(--glow);text-align:center;line-height:1.2;margin-bottom:.3rem;}
+.splash-sub{font-size:.88rem;color:var(--mist);letter-spacing:.25em;text-align:center;margin-bottom:2rem;}
+
+.about-card{background:rgba(196,117,42,.05);border:1px solid rgba(196,117,42,.18);border-radius:16px;padding:1.3rem;margin-bottom:2rem;width:100%;max-width:360px;}
+.about-card h3{font-family:'Amiri',serif;font-size:1.2rem;color:var(--glow);margin-bottom:.8rem;text-align:center;}
+.about-body{font-size:.82rem;color:var(--mist);line-height:1.8;}
+.about-body strong{color:var(--sand);}
+.about-verse{font-family:'Amiri',serif;font-size:.95rem;color:var(--sand);border-top:1px solid rgba(196,117,42,.15);margin-top:.9rem;padding-top:.9rem;text-align:center;line-height:1.7;}
+.about-ref{font-size:.7rem;color:var(--ember);display:block;margin-top:.3rem;}
+
+.btn-main{background:linear-gradient(135deg,var(--ember),var(--glow));color:var(--black);border:none;padding:1rem 2.5rem;font-size:1.05rem;font-family:'Cairo',sans-serif;font-weight:700;border-radius:50px;cursor:pointer;box-shadow:0 5px 25px rgba(196,117,42,.4);transition:all .3s;width:100%;max-width:300px;letter-spacing:.03em;}
+.btn-main:active{transform:scale(.97);}
+.btn-ghost{background:transparent;color:var(--mist);border:1px solid var(--fog);padding:.75rem 2rem;font-size:.88rem;font-family:'Cairo',sans-serif;font-weight:600;border-radius:50px;cursor:pointer;transition:all .3s;margin-top:.8rem;width:100%;max-width:300px;}
+.btn-ghost:hover{border-color:var(--ember);color:var(--ember);}
+
+/* ===== NAME ENTRY ===== */
+#name-entry{align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 20%,#1a0a0a,#04040a);}
+.entry-box{background:var(--ash);border:1px solid rgba(196,117,42,.2);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:360px;text-align:center;}
+.entry-title{font-family:'Amiri',serif;font-size:1.6rem;color:var(--glow);margin-bottom:.5rem;}
+.entry-desc{font-size:.8rem;color:var(--mist);margin-bottom:1.5rem;line-height:1.6;}
+.big-input{width:100%;background:var(--deep);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem;font-size:1.1rem;color:var(--sand);font-family:'Cairo',sans-serif;outline:none;text-align:center;transition:border-color .3s;}
+.big-input:focus{border-color:var(--glow);}
+.big-input::placeholder{color:var(--fog);}
+
+/* ===== LOADING / MESSAGE SCREEN ===== */
+#msg-screen{align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 30%,#0a0505,#04040a);}
+.msg-box{text-align:center;max-width:320px;}
+.msg-icon{font-size:4rem;margin-bottom:1rem;animation:bounce .6s ease-in-out infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
+.msg-title{font-family:'Amiri',serif;font-size:1.6rem;color:var(--glow);margin-bottom:.8rem;}
+.msg-body{font-size:.88rem;color:var(--mist);line-height:1.7;}
+.msg-highlight{font-size:1rem;font-weight:700;margin-top:.8rem;padding:.6rem 1.2rem;border-radius:12px;display:inline-block;}
+
+/* ===== LOGIN (Leader) ===== */
+#login-screen{align-items:center;justify-content:center;padding:2rem;}
+.login-box{background:var(--ash);border:1px solid rgba(196,117,42,.2);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:360px;text-align:center;}
+.login-title{font-family:'Amiri',serif;font-size:1.4rem;color:var(--glow);margin-bottom:1.2rem;}
+.inp-label{font-size:.8rem;color:var(--sand);margin-bottom:.4rem;display:block;text-align:right;}
+.sel-inp,.txt-inp{width:100%;background:var(--deep);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.9rem;font-size:.92rem;color:var(--sand);font-family:'Cairo',sans-serif;outline:none;text-align:right;margin-bottom:1rem;}
+.sel-inp:focus,.txt-inp:focus{border-color:var(--glow);}
+
+/* ===== DASHBOARD ===== */
+.top-bar{background:rgba(10,10,20,.97);padding:.9rem 1.1rem;border-bottom:1px solid rgba(196,117,42,.12);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.tl{display:flex;flex-direction:column;}
+.tl-greet{font-size:.65rem;color:var(--mist);}
+.tl-name{font-size:1rem;font-weight:700;color:var(--sand);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbadge{display:inline-flex;align-items:center;gap:.25rem;font-size:.62rem;padding:.15rem .55rem;border-radius:20px;margin-top:.2rem;font-weight:700;}
+.tbadge.t1{background:rgba(196,117,42,.18);color:var(--t1);border:1px solid var(--t1);}
+.tbadge.t2{background:rgba(42,107,139,.18);color:var(--t2);border:1px solid var(--t2);}
+.tbadge.t3{background:rgba(139,42,107,.18);color:var(--t3);border:1px solid var(--t3);}
+.tbadge.t4{background:rgba(42,139,74,.18);color:var(--t4);border:1px solid var(--t4);}
+.score-row{display:flex;gap:.5rem;}
+.smini{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:.35rem .6rem;text-align:center;min-width:52px;}
+.smini .v{font-size:.95rem;font-weight:900;display:block;}
+.smini .v.p{color:var(--green);}
+.smini .v.n{color:var(--crimson);}
+.smini .l{font-size:.5rem;color:var(--mist);}
+
+.nav-tabs{display:flex;background:var(--deep);border-bottom:1px solid rgba(196,117,42,.08);position:sticky;top:70px;z-index:99;}
+.ntab{flex:1;padding:.7rem .3rem .55rem;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--fog);font-family:'Cairo',sans-serif;font-size:.62rem;font-weight:600;transition:all .2s;border-bottom:2px solid transparent;display:flex;flex-direction:column;align-items:center;gap:.15rem;}
+.ntab.active{color:var(--glow);border-bottom-color:var(--glow);}
+.ntab .ni{font-size:1.1rem;}
+
+.tab-pane{display:none;padding:1rem;flex:1;}
+.tab-pane.active{display:block;}
+
+.sec-title{font-size:.75rem;color:var(--ember);letter-spacing:.12em;margin-bottom:.9rem;display:flex;align-items:center;gap:.4rem;font-weight:700;}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(196,117,42,.12);}
+
+/* ===== ANNOUNCEMENTS ===== */
+.announce-list{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.2rem;}
+.announce-card{background:var(--ash);border-radius:14px;padding:1rem;border-right:3px solid var(--ember);position:relative;}
+.announce-card.urgent{border-right-color:var(--crimson);background:rgba(255,51,51,.04);}
+.announce-card.good{border-right-color:var(--green);background:rgba(34,197,94,.04);}
+.ac-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+.ac-type{font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:8px;letter-spacing:.08em;}
+.type-announce{background:rgba(196,117,42,.2);color:var(--ember);}
+.type-urgent{background:rgba(255,51,51,.2);color:var(--crimson);}
+.type-good{background:rgba(34,197,94,.2);color:var(--green);}
+.ac-time{font-size:.6rem;color:var(--fog);}
+.ac-title{font-size:.88rem;font-weight:700;color:var(--sand);margin-bottom:.3rem;}
+.ac-body{font-size:.78rem;color:var(--mist);line-height:1.55;}
+
+/* ===== RADAR WELL ===== */
+.well-radar-wrap{position:relative;width:100%;padding-bottom:100%;margin-bottom:1rem;}
+.well-radar-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
+.radar-legend{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.2rem;}
+.rl-item{background:var(--ash);border-radius:10px;padding:.6rem .8rem;display:flex;align-items:center;gap:.5rem;}
+.rl-dot{width:10px;height:10px;border-radius:50%;}
+.rl-info{}
+.rl-name{font-size:.75rem;font-weight:700;}
+.rl-pts{font-size:.62rem;color:var(--mist);}
+
+/* ===== THERMOMETER / DANGER ===== */
+.thermo-wrap{background:var(--ash);border-radius:16px;padding:1.2rem;margin-bottom:1.2rem;border:1px solid rgba(255,255,255,.04);}
+.thermo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;}
+.thermo-ht{font-size:.88rem;font-weight:700;color:var(--sand);}
+.thermo-stat{font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:8px;}
+.ts-safe{background:rgba(34,197,94,.15);color:var(--green);}
+.ts-warn{background:rgba(232,148,58,.15);color:var(--glow);}
+.ts-danger{background:rgba(255,51,51,.15);color:var(--crimson);animation:blink 1s infinite alternate;}
+@keyframes blink{from{opacity:.6;}to{opacity:1;}}
+.thermo-track{height:28px;background:var(--deep);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+.thermo-bar{height:100%;width:5%;transition:width .7s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--green) 0%,var(--glow) 55%,var(--crimson) 100%);}
+.thermo-tick{display:flex;justify-content:space-between;font-size:.58rem;color:var(--fog);margin-top:.35rem;padding:0 .15rem;}
+
+.danger-score-info{background:rgba(255,51,51,.04);border:1px solid rgba(255,51,51,.12);border-radius:12px;padding:.9rem;margin-bottom:1.2rem;}
+.dsi-text{font-size:.78rem;color:var(--mist);line-height:1.65;}
+
+/* ADMIN PANEL */
+.admin-wrap{background:rgba(196,117,42,.04);border:1px solid rgba(196,117,42,.18);border-radius:14px;padding:1rem;margin-top:1.2rem;}
+.admin-head{font-size:.78rem;color:var(--glow);font-weight:700;margin-bottom:.6rem;}
+.admin-btns{display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;}
+.abtn{font-family:'Cairo',sans-serif;font-size:.72rem;font-weight:700;padding:.45rem .9rem;border-radius:20px;cursor:pointer;transition:all .2s;border:none;}
+.abtn-pos{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.abtn-neg{background:rgba(255,51,51,.15);color:var(--crimson);border:1px solid rgba(255,51,51,.3);}
+.abtn-reset{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.25);width:100%;margin-top:.3rem;}
+.custom-pts-row{display:flex;gap:.5rem;margin-top:.5rem;}
+.pts-inp{flex:1;background:var(--deep);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.45rem;font-size:.85rem;color:var(--sand);font-family:'Cairo',sans-serif;outline:none;text-align:center;}
+
+/* ===== CHALLENGES ===== */
+.ch-card{background:var(--ash);border-radius:16px;padding:1.1rem;margin-bottom:.9rem;border:1px solid rgba(255,255,255,.04);position:relative;overflow:hidden;}
+.ch-card::before{content:'';position:absolute;top:0;right:0;width:50px;height:50px;border-radius:0 0 0 100%;}
+.ch-pos::before{background:rgba(34,197,94,.15);}
+.ch-neg::before{background:rgba(255,51,51,.15);}
+.ch-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;gap:.5rem;}
+.ch-title{font-size:.88rem;font-weight:700;color:var(--sand);flex:1;}
+.ch-pts{font-size:.75rem;font-weight:700;flex-shrink:0;}
+.ch-pts.p{color:var(--green);}
+.ch-pts.n{color:var(--crimson);}
+.ch-desc{font-size:.78rem;color:var(--mist);line-height:1.55;margin-bottom:.9rem;}
+.ch-lock{background:rgba(10,10,20,.95);position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;gap:.6rem;z-index:5;transition:opacity .3s;}
+.ch-lock.open{opacity:0;pointer-events:none;}
+.lock-hint{font-size:.75rem;color:var(--mist);text-align:center;}
+.code-inp{background:var(--deep);border:1px solid rgba(196,117,42,.3);border-radius:10px;padding:.6rem 1rem;font-size:.9rem;color:var(--sand);font-family:'Cairo',sans-serif;outline:none;text-align:center;width:180px;letter-spacing:.15em;}
+.btn-unlock{background:linear-gradient(135deg,var(--ember),var(--glow));color:var(--black);border:none;padding:.5rem 1.3rem;font-size:.8rem;font-family:'Cairo',sans-serif;font-weight:700;border-radius:20px;cursor:pointer;}
+.ch-btn{background:linear-gradient(135deg,var(--ember),var(--glow));color:var(--black);border:none;padding:.6rem 1rem;font-size:.78rem;font-family:'Cairo',sans-serif;font-weight:700;border-radius:20px;cursor:pointer;width:100%;transition:opacity .2s;}
+.ch-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ===== QUIZ ===== */
+.quiz-card{background:var(--ash);border-radius:16px;padding:1.3rem;border:1px solid rgba(196,117,42,.18);margin-bottom:.9rem;}
+.q-num{font-size:.65rem;color:var(--ember);letter-spacing:.12em;margin-bottom:.5rem;}
+.q-text{font-family:'Amiri',serif;font-size:1.05rem;color:var(--sand);line-height:1.65;margin-bottom:1rem;}
+.q-opts{display:flex;flex-direction:column;gap:.5rem;}
+.q-opt{background:var(--deep);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.75rem .9rem;cursor:pointer;font-size:.83rem;color:var(--bone);text-align:right;font-family:'Cairo',sans-serif;transition:all .2s;}
+.q-opt:hover{border-color:var(--ember);color:var(--sand);}
+.q-opt.correct{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);}
+.q-opt.wrong{background:rgba(255,51,51,.15);border-color:var(--crimson);color:var(--crimson);}
+.quiz-result{background:var(--ash);border-radius:16px;padding:1.3rem;text-align:center;display:none;}
+
+/* ===== MAP ===== */
+.map-wrap{background:var(--ash);border-radius:16px;padding:1.2rem;border:1px solid rgba(196,117,42,.2);margin-bottom:1rem;}
+.map-title{font-family:'Amiri',serif;font-size:1.1rem;color:var(--glow);margin-bottom:.5rem;}
+.map-desc{font-size:.78rem;color:var(--mist);line-height:1.55;margin-bottom:.9rem;}
+.map-canvas{width:100%;height:180px;background:var(--void);border-radius:12px;border:1px dashed rgba(196,117,42,.25);position:relative;overflow:hidden;}
+.map-canvas svg{width:100%;height:100%;}
+.map-fog{position:absolute;inset:0;background:rgba(4,4,10,.6);border-radius:12px;}
+.map-fog-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--fog);}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(25px);background:var(--ember);color:var(--black);padding:.65rem 1.4rem;border-radius:50px;font-size:.82rem;font-weight:700;z-index:500;opacity:0;transition:all .3s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="particles"></div>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash" class="screen active">
+  <svg class="well-svg" viewBox="0 0 120 120" fill="none">
+    <circle cx="60" cy="60" r="55" stroke="#c4752a" stroke-width="1.5" stroke-dasharray="4 4" opacity=".4"/>
+    <rect x="30" y="55" width="60" height="35" rx="4" fill="#13131e" stroke="#c4752a" stroke-width="1.5"/>
+    <rect x="25" y="50" width="70" height="10" rx="3" fill="#c4752a"/>
+    <path d="M45 50 Q45 28 60 28 Q75 28 75 50" stroke="#c4752a" stroke-width="2" fill="none"/>
+    <rect x="42" y="28" width="5" height="24" rx="2" fill="#c4752a"/>
+    <rect x="73" y="28" width="5" height="24" rx="2" fill="#c4752a"/>
+    <rect x="38" y="25" width="44" height="6" rx="3" fill="#e8943a"/>
+    <line x1="60" y1="31" x2="60" y2="58" stroke="#c4752a" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <circle cx="60" cy="70" r="12" fill="#ff2200" opacity=".6"/>
+    <circle cx="60" cy="70" r="6" fill="#ff4444" opacity=".9"/>
+    <circle cx="20" cy="22" r="1.5" fill="#e8943a" opacity=".8"/>
+    <circle cx="95" cy="16" r="1" fill="#e8943a" opacity=".6"/>
+    <circle cx="100" cy="88" r="1.5" fill="#e8943a" opacity=".7"/>
+  </svg>
+  <div class="splash-title">عشيرة برهوت</div>
+  <div class="splash-sub">مؤتمر الشباب ٢٠٢٥</div>
+
+  <div class="about-card">
+    <h3>🕳️ عن المؤتمر</h3>
+    <div class="about-body">
+      مؤتمر مستوحى من رواية <strong>عشيرة برهوت</strong> للدكتور أحمد خالد مصطفى.<br><br>
+      <strong>أربع عشائر</strong> تنافس وتتعاون للخروج من ظلام بئر برهوت إلى النور.<br>
+      كل عشيرة تحمل ربع الخريطة وتحل ألغاز الغرفة المظلمة للتقدم للأمام.<br><br>
+      كلما تراكمت نقاط الخطر، تقترب العشيرة من البئر. كلما كسبت نقاط النور، تبتعد وتخرج.
+      <div class="about-verse">
+        "أنا هو نور العالم، من يتبعني لا يمشي في الظلام بل يكون له نور الحياة"
+        <span class="about-ref">يوحنا ٨: ١٢</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-main" onclick="goToScreen('name-entry')">ابدأ الرحلة 🔥</button>
+  <button class="btn-ghost" onclick="goToScreen('login-screen')">🛡️ دخول القائد</button>
+</div>
+
+<!-- ===== NAME ENTRY ===== -->
+<div id="name-entry" class="screen" style="align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 20%,#1a0808,#04040a);">
+  <div class="entry-box">
+    <div class="entry-title">من أنت؟</div>
+    <div class="entry-desc">اكتب اسمك لتقديم طلب الانضمام للرحلة</div>
+    <input type="text" id="playerNameInput" class="big-input" placeholder="اكتب اسمك هنا..." maxlength="25" style="margin-bottom:1.2rem;">
+    <button class="btn-main" onclick="submitName()" style="max-width:100%;">تقديم الطلب ←</button>
+    <button class="btn-ghost" onclick="goToScreen('splash')" style="max-width:100%;">رجوع</button>
+  </div>
+</div>
+
+<!-- ===== MSG SCREEN ===== -->
+<div id="msg-screen" class="screen" style="align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 30%,#0a0505,#04040a);">
+  <div class="msg-box">
+    <div class="msg-icon" id="msgIcon">⏳</div>
+    <div class="msg-title" id="msgTitle">جاري المراجعة...</div>
+    <div class="msg-body" id="msgBody">تم إرسال طلبك، يرجى الانتظار</div>
+    <div class="msg-highlight" id="msgHL" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ===== LEADER LOGIN ===== -->
+<div id="login-screen" class="screen" style="align-items:center;justify-content:center;padding:2rem;">
+  <div class="login-box">
+    <div class="login-title">🔐 بوابة القادة</div>
+    <label class="inp-label">العشيرة:</label>
+    <select id="tribeSelect" class="sel-inp">
+      <option value="t1">🔥 عشيرة المشعل</option>
+      <option value="t2">🧭 عشيرة البوصلة</option>
+      <option value="t3">🛡️ عشيرة الدرع</option>
+      <option value="t4">🕊️ عشيرة الصوت</option>
+    </select>
+    <label class="inp-label">رمز المرور:</label>
+    <input type="password" id="leaderPass" class="txt-inp" placeholder="الباسورد السري للقائد...">
+    <button class="btn-main" onclick="leaderLogin()" style="width:100%;max-width:100%;margin-bottom:.5rem;">دخول ←</button>
+    <button class="btn-ghost" onclick="goToScreen('splash')" style="max-width:100%;">رجوع</button>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard" class="screen">
+  <div class="top-bar">
+    <div class="tl">
+      <span class="tl-greet" id="topGreet">مرحباً</span>
+      <span class="tl-name" id="topName">-</span>
+      <span id="topBadge" class="tbadge"></span>
+    </div>
+    <div class="score-row">
+      <div class="smini"><span class="v p" id="posScore">0</span><span class="l">نور (+)</span></div>
+      <div class="smini"><span class="v n" id="negScore">0</span><span class="l">خطر (-)</span></div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="switchTab('announcements',this)"><span class="ni">📢</span>إعلانات</button>
+    <button class="ntab" onclick="switchTab('well',this)"><span class="ni">🕳️</span>البئر</button>
+    <button class="ntab" onclick="switchTab('danger',this)"><span class="ni">🌡️</span>المؤشر</button>
+    <button class="ntab" onclick="switchTab('challenges',this)"><span class="ni">📜</span>الورش</button>
+    <button class="ntab" onclick="switchTab('quiz',this)"><span class="ni">🔑</span>ألغاز</button>
+    <button class="ntab" onclick="switchTab('map',this)"><span class="ni">🗺️</span>خريطتك</button>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div id="tab-announcements" class="tab-pane active">
+    <div class="sec-title">📢 إعلانات المؤتمر</div>
+    <div class="announce-list" id="announceList">
+      <div class="announce-card urgent">
+        <div class="ac-head"><span class="ac-type type-urgent">عاجل</span><span class="ac-time">الآن</span></div>
+        <div class="ac-title">🔔 توزيع العشائر بدأ!</div>
+        <div class="ac-body">توجهوا فوراً للمسؤول المخصص لعشيرتكم لاستلام بطاقة الهوية وكود الغرفة المظلمة الأول.</div>
+      </div>
+      <div class="announce-card">
+        <div class="ac-head"><span class="ac-type type-announce">إعلان</span><span class="ac-time">٩:٣٠</span></div>
+        <div class="ac-title">📖 الجلسة الرئيسية</div>
+        <div class="ac-body">الجلسة الرئيسية للموضوع الأساسي تبدأ في القاعة الكبرى. الحضور إلزامي ويُحتسب في نقاط العشيرة.</div>
+      </div>
+      <div class="announce-card good">
+        <div class="ac-head"><span class="ac-type type-good">تشجيع</span><span class="ac-time">أمس</span></div>
+        <div class="ac-title">🌟 مرحباً بكم في عالم برهوت!</div>
+        <div class="ac-body">الرحلة بدأت. تذكروا: نقاط النور تبعدكم عن البئر، ونقاط الخطر تقربكم منه. اثبتوا في الإيمان وتعاونوا!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WELL / RADAR -->
+  <div id="tab-well" class="tab-pane">
+    <div class="sec-title">👁️ تموضع العشائر حول البئر</div>
+    <div class="well-radar-wrap">
+      <canvas id="wellCanvas"></canvas>
+    </div>
+    <div class="radar-legend" id="radarLegend"></div>
+    <div style="font-size:.72rem;color:var(--fog);text-align:center;margin-top:.3rem;">الأقرب للبئر = الأكثر في نقاط الخطر. اكسب نقاط النور للابتعاد!</div>
+  </div>
+
+  <!-- DANGER METER -->
+  <div id="tab-danger" class="tab-pane">
+    <div class="sec-title">🌡️ مؤشر الخطر الحراري</div>
+    <div class="thermo-wrap">
+      <div class="thermo-head">
+        <div class="thermo-ht">جاذبية البئر نحوك</div>
+        <span id="thermoStat" class="thermo-stat ts-safe">🟢 آمن</span>
+      </div>
+      <div class="thermo-track"><div id="thermoBar" class="thermo-bar"></div></div>
+      <div class="thermo-tick"><span>٠٪ أمان</span><span>٥٠٪ تحذير</span><span>١٠٠٪ خطر!</span></div>
+    </div>
+
+    <div class="danger-score-info">
+      <div class="dsi-text">المؤشر = (نقاط الخطر × ٢) − نقاط النور<br>كلما كسبت نوراً أكثر، تراجع المؤشر للخلف. يُصفَّر بعد كل شفت!</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.2rem;">
+      <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:1rem;text-align:center;">
+        <div style="font-size:2rem;font-weight:900;color:var(--green);" id="bigPos">0</div>
+        <div style="font-size:.7rem;color:var(--mist);">✅ نقاط النور</div>
+      </div>
+      <div style="background:rgba(255,51,51,.06);border:1px solid rgba(255,51,51,.2);border-radius:14px;padding:1rem;text-align:center;">
+        <div style="font-size:2rem;font-weight:900;color:var(--crimson);" id="bigNeg">0</div>
+        <div style="font-size:.7rem;color:var(--mist);">⚠️ نقاط الخطر</div>
+      </div>
+    </div>
+
+    <div class="admin-wrap" id="adminWrap" style="display:none;">
+      <div class="admin-head">🛠️ لوحة القائد (سرية)</div>
+      <div class="admin-btns">
+        <button class="abtn abtn-pos" onclick="adjustPts(10,0)">🟢 +١٠ نور</button>
+        <button class="abtn abtn-neg" onclick="adjustPts(0,10)">🔴 +١٠ خطر</button>
+      </div>
+      <div class="custom-pts-row">
+        <input type="number" id="customPts" class="pts-inp" placeholder="رقم مخصص" min="1" max="99">
+        <button class="abtn abtn-pos" onclick="adjustCustom(true)" style="flex-shrink:0;">+ نور</button>
+        <button class="abtn abtn-neg" onclick="adjustCustom(false)" style="flex-shrink:0;">+ خطر</button>
+      </div>
+      <button class="abtn abtn-reset" onclick="resetShift()">🔄 تصفير الشفت</button>
+    </div>
+  </div>
+
+  <!-- CHALLENGES -->
+  <div id="tab-challenges" class="tab-pane">
+    <div style="background:rgba(196,117,42,.04);border:1px solid rgba(196,117,42,.15);border-radius:12px;padding:.9rem;margin-bottom:1rem;">
+      <div style="font-size:.82rem;color:var(--glow);font-weight:700;margin-bottom:.25rem;">🗝️ الغرفة المظلمة</div>
+      <div style="font-size:.75rem;color:var(--mist);">قبل كل ورشة، ادخلوا الغرفة المظلمة واحصلوا على الكود السري لفتح التحدي الخاص بكم.</div>
+    </div>
+
+    <div class="ch-card ch-pos" id="ch1">
+      <div class="ch-lock" id="lock1">
+        <span style="font-size:2rem;">🔒</span>
+        <div class="lock-hint">أدخل كود الغرفة المظلمة لفتح التحدي</div>
+        <input type="text" class="code-inp" id="code1" placeholder="DARK-XXX">
+        <button class="btn-unlock" onclick="unlockCh(1,'DARK101')">فك القفل</button>
+      </div>
+      <div class="ch-head"><span class="ch-title">🧩 لغز المخطوطة الأولى</span><span class="ch-pts p">+١٥ نقطة نور</span></div>
+      <div class="ch-desc">رتّبوا الأحداث التاريخية الواردة في مخطوطة البئر ترتيباً زمنياً تنازلياً من الأقدم للأحدث وقدموا الإجابة للمسؤول.</div>
+      <button class="ch-btn" onclick="doneCh(1,15,0)">تأكيد الإجابة وكسب النقاط ✓</button>
+    </div>
+
+    <div class="ch-card ch-pos" id="ch2">
+      <div class="ch-lock" id="lock2">
+        <span style="font-size:2rem;">🔒</span>
+        <div class="lock-hint">أدخل كود الغرفة المظلمة لفتح التحدي</div>
+        <input type="text" class="code-inp" id="code2" placeholder="DARK-XXX">
+        <button class="btn-unlock" onclick="unlockCh(2,'DARK202')">فك القفل</button>
+      </div>
+      <div class="ch-head"><span class="ch-title">⚖️ ميزان العبور</span><span class="ch-pts p">+٢٥ نقطة نور</span></div>
+      <div class="ch-desc">٥ أفراد يحفظون ويرددون النص الدفاعي المحدد دون أي خطأ أمام مسؤول التحكيم الرسمي.</div>
+      <button class="ch-btn" onclick="doneCh(2,25,0)">تأكيد النجاح ✓</button>
+    </div>
+
+    <div class="ch-card ch-neg" id="ch3">
+      <div class="ch-lock" id="lock3">
+        <span style="font-size:2rem;">🔒</span>
+        <div class="lock-hint">أدخل كود الغرفة المظلمة لفتح التحدي</div>
+        <input type="text" class="code-inp" id="code3" placeholder="DARK-XXX">
+        <button class="btn-unlock" onclick="unlockCh(3,'DARK303')">فك القفل</button>
+      </div>
+      <div class="ch-head"><span class="ch-title">⚠️ لفافة الخطر العشوائية</span><span class="ch-pts n">−١٠ نقطة خطر</span></div>
+      <div class="ch-desc">تحدٍّ مفاجئ صادر من البئر! يجب حل هذه اللفافة في ٣ دقائق أو تُضاف نقاط خطر للعشيرة تلقائياً.</div>
+      <button class="ch-btn" onclick="doneCh(3,0,10)" style="background:linear-gradient(135deg,#8b0000,#cc2200);color:#fff;">الإبلاغ عن الفشل ✗</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="tab-quiz" class="tab-pane">
+    <div style="text-align:center;margin-bottom:1.2rem;">
+      <div style="font-family:'Amiri',serif;font-size:1.4rem;color:var(--glow);">🔑 ألغاز برهوت</div>
+      <div style="font-size:.75rem;color:var(--mist);margin-top:.3rem;">إجابة صحيحة = +٢ نقطة نور فورية</div>
+    </div>
+    <div class="quiz-card" id="qCard">
+      <div class="q-num" id="qNum">السؤال ١ من ٦</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-opts" id="qOpts"></div>
+    </div>
+    <div class="quiz-result" id="qResult">
+      <div id="qResIcon" style="font-size:2.5rem;margin-bottom:.6rem;">✅</div>
+      <div id="qResTitle" style="font-family:'Amiri',serif;font-size:1.3rem;color:var(--glow);margin-bottom:.4rem;"></div>
+      <div id="qResBody" style="font-size:.8rem;color:var(--mist);margin-bottom:1rem;"></div>
+      <button class="btn-main" onclick="nextQ()" style="max-width:100%;">السؤال التالي ←</button>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="tab-map" class="tab-pane">
+    <div class="map-wrap">
+      <div class="map-title" id="mapTitle">خريطتك السرية</div>
+      <div class="map-desc" id="mapDesc">ادخل بكود القائد لرؤية ربع الخريطة الخاص بعشيرتك.</div>
+      <div class="map-canvas">
+        <svg id="mapSvg" viewBox="0 0 200 180">
+          <rect width="200" height="180" fill="#04040a"/>
+        </svg>
+        <div class="map-fog" id="mapFog"><div class="map-fog-text">🔒 سرية – للقادة فقط</div></div>
+      </div>
+    </div>
+    <div style="background:var(--ash);border-radius:14px;padding:1rem;font-size:.8rem;color:var(--mist);line-height:1.65;">
+      📌 الأربع خرائط مع بعض = الخريطة الكاملة للخروج من برهوت. تعاونوا في النهاية!
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== CONFIG ==========
+const CFG = {
+  passwords: { t1:'torch2025', t2:'compass2025', t3:'shield2025', t4:'voice2025' },
+
+  // قائمة الأسماء المسجلة مسبقاً مع عشيرتها
+  registeredPlayers: {
+    'أحمد':    { tribe:'t1', tName:'عشيرة المشعل',    icon:'🔥' },
+    'مريم':    { tribe:'t2', tName:'عشيرة البوصلة',   icon:'🧭' },
+    'يوسف':   { tribe:'t3', tName:'عشيرة الدرع',     icon:'🛡️' },
+    'سارة':    { tribe:'t4', tName:'عشيرة الصوت',    icon:'🕊️' },
+    'عمر':     { tribe:'t1', tName:'عشيرة المشعل',    icon:'🔥' },
+    'نور':     { tribe:'t2', tName:'عشيرة البوصلة',   icon:'🧭' },
+    'داود':    { tribe:'t3', tName:'عشيرة الدرع',     icon:'🛡️' },
+    'ليلى':   { tribe:'t4', tName:'عشيرة الصوت',    icon:'🕊️' },
+    // أضف المزيد من الأسماء هنا
+    'test':    { tribe:'t1', tName:'عشيرة المشعل',    icon:'🔥' },
+  },
+
+  tribes: {
+    t1: { name:'عشيرة المشعل',  icon:'🔥', color:'#c4752a',
+          mapTitle:'الربع الشمالي الشرقي – وديان الجفاف',
+          mapDesc:'يحتوي جزؤكم على ممرات صخرية ضيقة وموقع الآبار الجافة المطلة على حدود برهوت الخارجية.',
+          mapSvg:'<path d="M10 90 Q50 40 100 20 T190 10" stroke="#c4752a" stroke-width="2" fill="none" stroke-dasharray="5 3"/><circle cx="100" cy="20" r="6" fill="#c4752a"/><circle cx="190" cy="10" r="4" fill="#c4752a" opacity=".6"/><text x="100" y="38" fill="#e8dcc8" font-size="9" text-anchor="middle" font-family="Cairo">نقطة التجمع</text><line x1="30" y1="120" x2="80" y2="60" stroke="#c4752a" stroke-width="1" opacity=".4"/>' },
+    t2: { name:'عشيرة البوصلة', icon:'🧭', color:'#2a6b8b',
+          mapTitle:'الربع الشمالي الغربي – ممرات الأمان',
+          mapDesc:'خريطتكم تكشف المسارات الآمنة الحقيقية عبر الرمال المتحركة نحو طريق عُمان السريع.',
+          mapSvg:'<path d="M10 10 Q90 50 100 120 T190 170" stroke="#2a6b8b" stroke-width="2" fill="none" stroke-dasharray="5 3"/><circle cx="100" cy="120" r="6" fill="#2a6b8b"/><text x="100" y="110" fill="#e8dcc8" font-size="9" text-anchor="middle" font-family="Cairo">ممر المغناطيس</text><rect x="30" y="30" width="20" height="20" stroke="#2a6b8b" stroke-width="1" fill="none" stroke-dasharray="3"/>' },
+    t3: { name:'عشيرة الدرع',   icon:'🛡️', color:'#8b2a6b',
+          mapTitle:'الربع الجنوبي الشرقي – الملاذ القديم',
+          mapDesc:'يظهر في قطاعكم الحصن القديم المهجور – الملجأ عند خروج الغازات الرمادية السامة من البئر.',
+          mapSvg:'<path d="M20 170 Q70 120 120 150 T180 20" stroke="#8b2a6b" stroke-width="2" fill="none" stroke-dasharray="5 3"/><rect x="105" y="138" width="18" height="18" fill="#8b2a6b"/><text x="120" y="172" fill="#e8dcc8" font-size="9" text-anchor="middle" font-family="Cairo">الحصن الأثري</text><circle cx="60" cy="90" r="4" fill="#8b2a6b" opacity=".5"/>' },
+    t4: { name:'عشيرة الصوت',   icon:'🕊️', color:'#2a8b4a',
+          mapTitle:'الربع الجنوبي الغربي – بوابة الخروج',
+          mapDesc:'أنتم تملكون أهم ربع! يحوي الشفرة الهندسية لبوابة مدينة النور ومخرج الطوارئ السري.',
+          mapSvg:'<path d="M50 10 Q100 90 150 120 T190 90" stroke="#2a8b4a" stroke-width="2" fill="none" stroke-dasharray="5 3"/><circle cx="150" cy="120" r="8" fill="#2a8b4a"/><text x="150" y="108" fill="#e8dcc8" font-size="9" text-anchor="middle" font-family="Cairo">البوابة الختامية</text><path d="M50 10 L65 25 L50 40 Z" fill="#2a8b4a" opacity=".4"/>' }
+  }
+};
+
+// ========== STATE ==========
+let S = {
+  currentTribe: null,
+  isLeader: false,
+  playerName: '',
+  scores: {
+    t1: { pos: 20, neg: 15 },
+    t2: { pos: 10, neg: 38 },
+    t3: { pos: 30, neg: 18 },
+    t4: { pos: 12, neg: 42 }
+  },
+  currentQ: 0,
+  qAnswered: false
+};
+
+// ========== PARTICLES ==========
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<22;i++){
+    const p=document.createElement('div'); p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(7+Math.random()*10)+'s';
+    p.style.animationDelay=(Math.random()*8)+'s';
+    const w=(1+Math.random()*2.5)+'px';
+    p.style.width=w; p.style.height=w;
+    p.style.background=Math.random()>.7?'#e8943a':'#c4752a';
+    c.appendChild(p);
+  }
+})();
+
+// ========== NAV ==========
+function goToScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ========== NAME SUBMIT ==========
+function submitName(){
+  const raw = document.getElementById('playerNameInput').value.trim();
+  if(!raw){ showToast('اكتب اسمك أولاً!'); return; }
+  S.playerName = raw;
+
+  // Show "request sent" message
+  showMsg('⏳','جاري مراجعة طلبك...','تم إرسال طلب الانضمام للبئر','','','#666');
+  goToScreen('msg-screen');
+
+  // Look up player after 2 seconds
+  setTimeout(()=>{
+    const key = Object.keys(CFG.registeredPlayers).find(k => k.toLowerCase() === raw.toLowerCase());
+    if(key){
+      const pd = CFG.registeredPlayers[key];
+      S.currentTribe = pd.tribe;
+      S.isLeader = false;
+      showMsg('✅','تم قبول طلبك!',
+        `مرحباً ${raw}، تم تعيينك في:`,
+        pd.tName + ' ' + pd.icon,
+        `"${CFG.tribes[pd.tribe].mapTitle.split('–')[0].trim()}"`,
+        pd.tribe === 't1' ? '#c4752a' : pd.tribe === 't2' ? '#2a6b8b' : pd.tribe === 't3' ? '#8b2a6b' : '#2a8b4a'
+      );
+      // Auto-redirect to dashboard after 3s
+      setTimeout(()=>{
+        setupDashboard();
+        goToScreen('dashboard');
+        showToast('🔥 أهلاً بك في ' + pd.tName);
+      }, 2800);
+    } else {
+      showMsg('❌','لم يُعثر على اسمك',
+        `الاسم "${raw}" غير مسجل في قائمة المؤتمر.`,
+        'راجع المسؤول لإضافة اسمك','',
+        '#ff3333'
+      );
+      setTimeout(()=>goToScreen('name-entry'), 3000);
+    }
+  }, 2000);
+}
+
+function showMsg(icon, title, body, hl, sub, hlColor){
+  document.getElementById('msgIcon').textContent = icon;
+  document.getElementById('msgTitle').textContent = title;
+  document.getElementById('msgBody').textContent = body;
+  const hlEl = document.getElementById('msgHL');
+  if(hl){
+    hlEl.style.display = 'inline-block';
+    hlEl.textContent = hl;
+    hlEl.style.background = (hlColor||'#c4752a') + '22';
+    hlEl.style.color = hlColor || '#c4752a';
+    hlEl.style.border = '1px solid ' + (hlColor||'#c4752a') + '44';
+    if(sub){
+      hlEl.innerHTML = hl + '<br><span style="font-size:.75rem;opacity:.7">' + sub + '</span>';
+    }
+  } else {
+    hlEl.style.display = 'none';
+  }
+}
+
+// ========== LEADER LOGIN ==========
+function leaderLogin(){
+  const t = document.getElementById('tribeSelect').value;
+  const p = document.getElementById('leaderPass').value.trim();
+  if(CFG.passwords[t] === p){
+    S.currentTribe = t;
+    S.isLeader = true;
+    S.playerName = 'القائد';
+    setupDashboard();
+    goToScreen('dashboard');
+    showToast('🔑 دخلت كقائد لـ' + CFG.tribes[t].name);
+    document.getElementById('leaderPass').value = '';
+  } else {
+    showToast('❌ كلمة المرور غير صحيحة!');
+  }
+}
+
+// ========== SETUP DASHBOARD ==========
+function setupDashboard(){
+  const t = S.currentTribe;
+  const td = CFG.tribes[t];
+
+  // top bar
+  document.getElementById('topGreet').textContent = S.isLeader ? '🛡️ قائد العشيرة' : 'مرحباً';
+  document.getElementById('topName').textContent = S.isLeader ? td.name : S.playerName;
+  const badge = document.getElementById('topBadge');
+  badge.textContent = td.icon + ' ' + td.name.replace('عشيرة ','');
+  badge.className = 'tbadge ' + t;
+
+  // admin panel visibility
+  document.getElementById('adminWrap').style.display = S.isLeader ? 'block' : 'none';
+
+  // map
+  if(S.isLeader){
+    document.getElementById('mapTitle').textContent = td.mapTitle;
+    document.getElementById('mapDesc').textContent = td.mapDesc;
+    document.getElementById('mapSvg').innerHTML = '<rect width="200" height="180" fill="#04040a"/>' + td.mapSvg;
+    document.getElementById('mapFog').style.display = 'none';
+  }
+
+  updateScores();
+  renderQuiz();
+}
+
+// ========== TABS ==========
+function switchTab(name, el){
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='well') renderWell();
+}
+
+// ========== SCORES ==========
+function updateScores(){
+  const sc = S.scores[S.currentTribe];
+  document.getElementById('posScore').textContent = sc.pos;
+  document.getElementById('negScore').textContent = sc.neg;
+  document.getElementById('bigPos').textContent = sc.pos;
+  document.getElementById('bigNeg').textContent = sc.neg;
+
+  let hz = (sc.neg * 2) - sc.pos;
+  if(hz < 0) hz = 0;
+  let pct = Math.min(100, Math.max(4, hz));
+  document.getElementById('thermoBar').style.width = pct + '%';
+
+  const st = document.getElementById('thermoStat');
+  if(pct < 35){
+    st.textContent = '🟢 آمن مستقر';
+    st.className = 'thermo-stat ts-safe';
+  } else if(pct < 70){
+    st.textContent = '🟡 تحذير: سحب نحو البئر';
+    st.className = 'thermo-stat ts-warn';
+  } else {
+    st.textContent = '🔴 خطر داهم!';
+    st.className = 'thermo-stat ts-danger';
+  }
+}
+
+function adjustPts(pos, neg){
+  S.scores[S.currentTribe].pos += pos;
+  S.scores[S.currentTribe].neg += neg;
+  updateScores();
+  renderWell();
+  showToast('⚡ تم تحديث النقاط!');
+}
+
+function adjustCustom(isPos){
+  const v = parseInt(document.getElementById('customPts').value) || 0;
+  if(v <= 0){ showToast('أدخل رقماً صحيحاً!'); return; }
+  if(isPos) adjustPts(v, 0);
+  else adjustPts(0, v);
+  document.getElementById('customPts').value = '';
+}
+
+function resetShift(){
+  if(!confirm('تأكيد تصفير الشفت؟ سيبدأ المؤشر من الصفر.')) return;
+  S.scores[S.currentTribe] = { pos: 0, neg: 0 };
+  updateScores();
+  renderWell();
+  showToast('🔄 تم تصفير الشفت!');
+}
+
+// ========== WELL CANVAS ==========
+function renderWell(){
+  const canvas = document.getElementById('wellCanvas');
+  const wrap = canvas.parentElement;
+  const sz = wrap.clientWidth;
+  canvas.width = sz;
+  canvas.height = sz;
+  const ctx = canvas.getContext('2d');
+  const cx = sz/2, cy = sz/2, R = sz/2;
+
+  ctx.clearRect(0,0,sz,sz);
+
+  // dark background circle
+  ctx.beginPath();
+  ctx.arc(cx,cy,R-2,0,Math.PI*2);
+  ctx.fillStyle = '#02020a';
+  ctx.fill();
+
+  // rings
+  [.18,.35,.55,.78].forEach(rf=>{
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*rf,0,Math.PI*2);
+    ctx.strokeStyle = 'rgba(196,117,42,0.12)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // well center
+  const grad = ctx.createRadialGradient(cx,cy,2,cx,cy,R*.15);
+  grad.addColorStop(0,'#ff3300');
+  grad.addColorStop(1,'#8b0000');
+  ctx.beginPath();
+  ctx.arc(cx,cy,R*.13,0,Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.font = `${R*.12}px serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🕳️',cx,cy);
+
+  // blips
+  const tOrder = ['t1','t2','t3','t4'];
+  const baseAngles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+  const colors = { t1:'#c4752a', t2:'#2a6b8b', t3:'#8b2a6b', t4:'#2a8b4a' };
+  const icons  = { t1:'🔥', t2:'🧭', t3:'🛡️', t4:'🕊️' };
+  const names  = { t1:'المشعل', t2:'البوصلة', t3:'الدرع', t4:'الصوت' };
+
+  // Random angle offsets for natural movement feel
+  if(!S._angleOffsets){
+    S._angleOffsets = { t1: Math.random()*.3-.15, t2: Math.random()*.3-.15, t3: Math.random()*.3-.15, t4: Math.random()*.3-.15 };
+  }
+
+  const legendData = [];
+
+  tOrder.forEach((tid, i)=>{
+    const sc = S.scores[tid];
+    let hz = (sc.neg * 2) - sc.pos;
+    if(hz < 0) hz = 0;
+    // distance from center: more danger = closer
+    let dist = R * .82 * (1 - Math.min(hz, 100)/100);
+    if(dist < R*.16) dist = R*.16;
+
+    // slightly randomized angle for non-uniform look
+    const angle = baseAngles[i] + (S._angleOffsets[tid] || 0);
+    const bx = cx + dist * Math.cos(angle);
+    const by = cy + dist * Math.sin(angle);
+
+    // glow
+    const glow = ctx.createRadialGradient(bx,by,2,bx,by,22);
+    glow.addColorStop(0, colors[tid]+'55');
+    glow.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(bx,by,22,0,Math.PI*2);
+    ctx.fillStyle = glow;
+    ctx.fill();
+
+    // circle
+    ctx.beginPath();
+    ctx.arc(bx,by,16,0,Math.PI*2);
+    ctx.fillStyle = colors[tid];
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = tid === S.currentTribe ? 2.5 : 1;
+    ctx.stroke();
+
+    // icon
+    ctx.font = '13px serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(icons[tid], bx, by);
+
+    // name label
+    ctx.font = `bold ${R*.052}px Cairo, sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const lby = by + 19;
+    ctx.fillStyle = 'rgba(0,0,0,.65)';
+    const lw = ctx.measureText(names[tid]).width + 10;
+    ctx.fillRect(bx-lw/2, lby-1, lw, 16);
+    ctx.fillStyle = colors[tid];
+    ctx.fillText(names[tid], bx, lby);
+
+    legendData.push({ tid, name:names[tid], color:colors[tid], icon:icons[tid], pos:sc.pos, neg:sc.neg, hz });
+  });
+
+  // legend
+  const leg = document.getElementById('radarLegend');
+  leg.innerHTML = legendData.map(d=>`
+    <div class="rl-item">
+      <div class="rl-dot" style="background:${d.color}"></div>
+      <div class="rl-info">
+        <div class="rl-name" style="color:${d.color}">${d.icon} ${d.name}</div>
+        <div class="rl-pts">نور: ${d.pos} | خطر: ${d.neg} | مؤشر: ${d.hz}%</div>
+      </div>
+    </div>`).join('');
+}
+
+// ========== CHALLENGES ==========
+function unlockCh(id, correct){
+  const val = document.getElementById('code'+id).value.trim().toUpperCase();
+  if(val === correct){
+    document.getElementById('lock'+id).classList.add('open');
+    showToast('🔓 تم فتح التحدي!');
+  } else {
+    showToast('❌ الكود غير صحيح! ابحث عنه في الغرفة المظلمة.');
+  }
+}
+
+function doneCh(id, posAdd, negAdd){
+  adjustPts(posAdd, negAdd);
+  const card = document.getElementById('ch'+id);
+  card.style.opacity = '.4';
+  card.style.pointerEvents = 'none';
+  const msg = posAdd > 0 ? `✅ +${posAdd} نقطة نور! المؤشر تراجع.` : `⚠️ تمت إضافة نقاط الخطر.`;
+  showToast(msg);
+}
+
+// ========== QUIZ ==========
+const QS = [
+  {q:'ما اسم التطبيق الغريب الذي وجده الكوري في رواية برهوت؟', opts:['DarkMap','BlackMap','ShadowMap','VoidMap'], ans:1},
+  {q:'ماذا اكتشف ناصر أن الرمال الرمادية في برهوت تحتوي في الحقيقة؟', opts:['معادن نادرة','رماد بركاني','عظام مسحوقة','ملح قديم'], ans:2},
+  {q:'ما المعجزة التي حدثت للطفلة لين في نهاية الرواية؟', opts:['شُفيت من المرض','نطقت لأول مرة','رأت رؤية','نجت من الغرق'], ans:1},
+  {q:'من قول المسيح: "أنا هو النور العالَم، من يتبعني..."', opts:['يجد الطريق','لا يمشي في الظلام','يُضيء الآخرين','يحيا إلى الأبد'], ans:1},
+  {q:'ما شعار عشيرة الدرع في مؤتمرنا؟', opts:['"أنيروا الطريق"','"نحو الحق نسير"','"اثبتوا في الإيمان"','"تكلم بالحق"'], ans:2},
+  {q:'في المزمور ٢٣، ماذا يقول داود عند المرور في وادي ظل الموت؟', opts:['أصرخ بقوة','لا أخاف شراً','أنتظر النجاة','أعود أدراجي'], ans:1}
+];
+
+function renderQuiz(){
+  if(S.currentQ >= QS.length){
+    document.getElementById('qCard').style.display='none';
+    document.getElementById('qResult').style.display='block';
+    document.getElementById('qResIcon').textContent='🎉';
+    document.getElementById('qResTitle').textContent='أنهيت كل الألغاز!';
+    document.getElementById('qResBody').textContent='ممتاز! ترقب ألغازاً جديدة في المؤتمر.';
+    document.querySelector('#qResult .btn-main').style.display='none';
+    return;
+  }
+  S.qAnswered = false;
+  const q = QS[S.currentQ];
+  document.getElementById('qNum').textContent = 'السؤال '+(S.currentQ+1)+' من '+QS.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qResult').style.display='none';
+  document.getElementById('qCard').style.display='block';
+  document.getElementById('qOpts').innerHTML = q.opts.map((o,i)=>
+    `<button class="q-opt" onclick="answerQ(this,${i===q.ans},${q.ans})">${o}</button>`
+  ).join('');
+}
+
+function answerQ(btn, correct, ci){
+  if(S.qAnswered) return;
+  S.qAnswered = true;
+  document.querySelectorAll('.q-opt').forEach((o,i)=>{
+    o.disabled=true;
+    if(i===ci) o.classList.add('correct');
+  });
+  if(!correct) btn.classList.add('wrong');
+  document.getElementById('qResult').style.display='block';
+  if(correct){
+    adjustPts(2,0);
+    document.getElementById('qResIcon').textContent='✅';
+    document.getElementById('qResTitle').textContent='إجابة صحيحة!';
+    document.getElementById('qResBody').textContent='+٢ نقطة نور تمت إضافتها تلقائياً!';
+    showToast('📖 +٢ نقطة نور!');
+  } else {
+    document.getElementById('qResIcon').textContent='❌';
+    document.getElementById('qResTitle').textContent='إجابة خاطئة';
+    document.getElementById('qResBody').textContent='الإجابة الصحيحة مُحددة بالأخضر.';
+  }
+}
+
+function nextQ(){ S.currentQ++; renderQuiz(); }
+
+// ========== TOAST ==========
+let tT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ========== INIT ==========
+document.getElementById('playerNameInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitName();});
+document.getElementById('leaderPass').addEventListener('keydown',e=>{if(e.key==='Enter')leaderLogin();});
+renderQuiz();
+</script>
+</body>
+</html>

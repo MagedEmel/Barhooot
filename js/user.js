@@ -28,8 +28,8 @@ btnLogout.addEventListener("click", () => {
 // 1) تحميل عتبات الألوان (config/settings) ثم تتبّع سكور المجموعة لحظياً
 // ------------------------------------------------------------
 async function init() {
-  let greenThreshold = 10;
-  let redThreshold = -10;
+  let greenThreshold = 150;
+  let redThreshold = 50;
 
   try {
     const cfgSnap = await getDoc(doc(db, "config", "settings"));
@@ -53,25 +53,15 @@ async function init() {
 }
 
 function updateIndicator(score, greenThreshold, redThreshold) {
-  scorePillEl.textContent = `السكور: ${score}`;
-
   let color, percent;
-  if (score >= greenThreshold) {
-    color = "green";
-    percent = 90;
-    labelEl.textContent = "أخضر";
-  } else if (score <= redThreshold) {
-    color = "red";
-    percent = 10;
-    labelEl.textContent = "أحمر";
-  } else {
-    color = "yellow";
-    // نحسب نسبة المؤشر بين العتبتين عشان يبان تدريجي وسط المنطقة الصفراء
-    const ratio = (score - redThreshold) / (greenThreshold - redThreshold); // 0..1
-    percent = 25 + ratio * 50; // يتراوح بين 25% و 75%
+  if (score >= greenThreshold) { color="green"; percent=10; labelEl.textContent="أخضر"; }
+  else if (score <= redThreshold) { color="red"; percent=90; labelEl.textContent="أحمر"; }
+  else {
+    color="yellow";
+    const ratio = (score - redThreshold) / (greenThreshold - redThreshold);
+    percent = 75 - ratio * 50;
     labelEl.textContent = "أصفر";
   }
-
   labelEl.className = "indicator-label " + color;
   markerEl.style.bottom = percent + "%";
 }

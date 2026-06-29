@@ -12,6 +12,7 @@ const btnLogout   = document.getElementById("btn-logout");
 const tasksList   = document.getElementById("tasks-list");
 
 const modalOverlay   = document.getElementById("modal-overlay");
+const modalCard      = modalOverlay.querySelector(".card");
 const modalTitle     = document.getElementById("modal-title");
 const modalPassword  = document.getElementById("modal-password");
 const modalError     = document.getElementById("modal-error");
@@ -19,6 +20,7 @@ const modalCancel    = document.getElementById("modal-cancel");
 const modalSubmit    = document.getElementById("modal-submit");
 
 const contentOverlay = document.getElementById("content-overlay");
+const contentCard    = contentOverlay.querySelector(".card");
 const contentTitle   = document.getElementById("content-title");
 const contentBody    = document.getElementById("content-body");
 const contentClose   = document.getElementById("content-close");
@@ -45,7 +47,8 @@ btnLogout.addEventListener("click", () => {
 // 1) المؤشر (نفس منطق صفحة اليوزر)
 // ------------------------------------------------------------
 async function initIndicator() {
-  let greenThreshold = 10, redThreshold = -10;
+  let greenThreshold = 10;
+  let redThreshold = 0;
   try {
     const cfgSnap = await getDoc(doc(db, "config", "settings"));
     if (cfgSnap.exists()) {
@@ -62,53 +65,77 @@ async function initIndicator() {
 }
 
 function updateIndicator(score, greenThreshold, redThreshold) {
-  scorePillEl.textContent = `السكور: ${score}`;
   let color, percent;
-  if (score >= greenThreshold) { color="green"; percent=90; labelEl.textContent="أخضر"; }
-  else if (score <= redThreshold) { color="red"; percent=10; labelEl.textContent="أحمر"; }
+  if (score >= greenThreshold) { color="green"; percent=10; labelEl.textContent="أخضر"; }
+  else if (score <= redThreshold) { color="red"; percent=90; labelEl.textContent="أحمر"; }
   else {
     color="yellow";
     const ratio = (score - redThreshold) / (greenThreshold - redThreshold);
-    percent = 25 + ratio * 50;
+    percent = 75 - ratio * 50;
     labelEl.textContent = "أصفر";
   }
   labelEl.className = "indicator-label " + color;
-  markerEl.style.bottom = percent + "%";
+  markerEl.style.top = percent + "%";
 }
 
 // ------------------------------------------------------------
 // 2) تحميل المهام (Tasks) وعرضها مقفولة
+//    - الترتيب مختلف لكل عشيرة (order[group])
+//    - الباسورد مختلف لكل عشيرة (password[group]) عشان التيمات متغشش من بعض
+//    - أي تاسك اتفتح مرة، يفضل مفتوح للأبد لهذه العشيرة (محفوظ في localStorage)
 // ------------------------------------------------------------
 let activeTask = null;
-const unlocked = new Set(); // tasks اللي اتفكت في الجلسة دي
+
+function unlockKey(taskId) {
+  return `clan_unlocked_${me.group}_${taskId}`;
+}
+function isUnlocked(taskId) {
+  return localStorage.getItem(unlockKey(taskId)) === "1";
+}
+function persistUnlocked(taskId) {
+  localStorage.setItem(unlockKey(taskId), "1");
+}
+
+// دعم فورمات قديم: لو order/password كانوا قيمة واحدة (مش Object) بتتطبق على كل العشائر
+function orderFor(task) {
+  if (task.order && typeof task.order === "object") {
+    const v = task.order[me.group];
+    return v === undefined ? Infinity : v;
+  }
+  return typeof task.order === "number" ? task.order : Infinity;
+}
+function passwordFor(task) {
+  if (task.password && typeof task.password === "object") {
+    return task.password[me.group];
+  }
+  return task.password;
+}
 
 async function loadTasks() {
   try {
     const snap = await getDocs(collection(db, "tasks"));
     let tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // الترتيب بيكون مختلف لكل عشيرة: order هو Object زي { "اسم العشيرة": رقم }
-    // لو المهمة قديمة وكان order رقم عادي (مش object)، بنستخدمه كـ fallback لكل العشائر
-    function orderFor(task) {
-      if (task.order && typeof task.order === "object") {
-        const v = task.order[me.group];
-        return v === undefined ? Infinity : v; // لو معمول لها ترتيب لعشيرتنا نستخدمه، غير كذا تنزل لتحت
-      }
-      return typeof task.order === "number" ? task.order : Infinity;
-    }
+    // نعرض بس المهام اللي فعلاً عندها باسورد متظبط لعشيرتنا
+    tasks = tasks.filter(t => passwordFor(t) !== undefined && passwordFor(t) !== "");
 
     tasks.sort((a, b) => orderFor(a) - orderFor(b));
 
     tasksList.innerHTML = "";
-    tasks.forEach(task => {
+    tasks.forEach((task, i) => {
+      const unlocked = isUnlocked(task.id);
       const item = document.createElement("div");
-      item.className = "task-item";
+      item.className = "task-item fade-in";
+      item.style.animationDelay = (i * 0.06) + "s";
+      item.dataset.taskId = task.id;
       item.innerHTML = `
-        <span>${task.title}</span>
-        <span class="lock-icon">🔒</span>
+        <span class="task-name">
+          ${unlocked ? `<span class="badge-open">مفتوحة</span>` : ""}${task.title}
+        </span>
+        <span class="lock-icon">${unlocked ? "🔓" : "🔒"}</span>
       `;
       item.addEventListener("click", () => {
-        if (unlocked.has(task.id)) {
+        if (isUnlocked(task.id)) {
           openContent(task);
         } else {
           openPasswordModal(task);
@@ -118,7 +145,7 @@ async function loadTasks() {
     });
 
     if (tasks.length === 0) {
-      tasksList.innerHTML = `<p class="muted">لا توجد مهام حالياً.</p>`;
+      tasksList.innerHTML = `<p class="muted">لا توجد مهام متاحة لعشيرتك حالياً.</p>`;
     }
   } catch (e) {
     console.error(e);
@@ -132,6 +159,9 @@ function openPasswordModal(task) {
   modalPassword.value = "";
   modalError.classList.add("hidden");
   modalOverlay.classList.remove("hidden");
+  modalOverlay.classList.add("overlay-fade");
+  modalCard.classList.remove("reveal-pop");
+  modalCard.classList.add("reveal-pop");
   modalPassword.focus();
 }
 
@@ -142,30 +172,29 @@ modalPassword.addEventListener("keydown", (e) => { if (e.key === "Enter") checkP
 
 function checkPassword() {
   if (!activeTask) return;
-  if (modalPassword.value === String(activeTask.password)) {
-    unlocked.add(activeTask.id);
+  const correctPassword = passwordFor(activeTask);
+  if (modalPassword.value === String(correctPassword)) {
+    persistUnlocked(activeTask.id); // يفضل مفتوح للأبد بعد كذا
     modalOverlay.classList.add("hidden");
     sfxUnlock.play().catch(()=>{});
-    markTaskUnlocked(activeTask.id);
+    loadTasks(); // إعادة رسم القايمة بالبادچ والقفل المفتوح
     openContent(activeTask);
   } else {
+    // هزة على المودال + رسالة خطأ
+    modalCard.classList.remove("shake");
+    void modalCard.offsetWidth; // إعادة تشغيل الأنيميشن
+    modalCard.classList.add("shake");
     modalError.classList.remove("hidden");
   }
-}
-
-function markTaskUnlocked(taskId) {
-  document.querySelectorAll(".task-item").forEach(el => {
-    if (el.textContent.includes(activeTask.title)) {
-      el.classList.add("unlocked");
-      el.querySelector(".lock-icon").textContent = "🔓";
-    }
-  });
 }
 
 function openContent(task) {
   contentTitle.textContent = task.title;
   contentBody.textContent = task.content || "(لا يوجد محتوى مضاف لهذه المهمة)";
   contentOverlay.classList.remove("hidden");
+  contentCard.classList.remove("reveal-pop");
+  void contentCard.offsetWidth;
+  contentCard.classList.add("reveal-pop");
 }
 contentClose.addEventListener("click", () => contentOverlay.classList.add("hidden"));
 

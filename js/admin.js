@@ -123,33 +123,38 @@ btnCustomPoints.addEventListener("click", () => {
 // 3) تاب المهام
 // ------------------------------------------------------------
 const taskTitleInp = document.getElementById("task-title");
-const taskPasswordInp = document.getElementById("task-password");
 const taskContentInp = document.getElementById("task-content");
 const taskOrderPerGroupDiv = document.getElementById("task-order-per-group");
 const btnAddTask = document.getElementById("btn-add-task");
 const tasksAdminList = document.getElementById("tasks-admin-list");
 
-// بيبني صف فيه "input رقم" لكل عشيرة موجودة، عشان الأدمن يحدد ترتيب المهمة لكل عشيرة لوحدها
-function renderTaskOrderInputs(container, existingOrder = {}) {
+// بيبني صف فيه "ترتيب" و"باسورد" لكل عشيرة موجودة
+function renderTaskGroupInputs(container, existingOrder = {}, existingPassword = {}) {
   if (!groupsCache.length) {
     container.innerHTML = `<p class="muted">لسه مفيش عشائر مُضافة، ضيف مستخدمين/مجموعات الأول.</p>`;
     return;
   }
   container.innerHTML = groupsCache.map(g => `
-    <div class="row">
-      <span class="muted" style="min-width:140px;">${g.id}</span>
+    <div class="group-task-row">
+      <span class="group-task-row-name">${g.id}</span>
       <input class="input order-for-group" data-group="${g.id}" type="number"
              placeholder="ترتيب" value="${existingOrder[g.id] ?? ""}">
+      <input class="input password-for-group" data-group="${g.id}" type="text"
+             placeholder="باسورد العشيرة دي" value="${existingPassword[g.id] ?? ""}">
     </div>
   `).join("");
 }
 
-function collectOrderMap(container) {
-  const map = {};
+function collectGroupData(container) {
+  const order = {};
+  const password = {};
   container.querySelectorAll(".order-for-group").forEach(inp => {
-    if (inp.value !== "") map[inp.dataset.group] = Number(inp.value);
+    if (inp.value !== "") order[inp.dataset.group] = Number(inp.value);
   });
-  return map;
+  container.querySelectorAll(".password-for-group").forEach(inp => {
+    if (inp.value !== "") password[inp.dataset.group] = inp.value;
+  });
+  return { order, password };
 }
 
 async function loadTasksAdmin() {
@@ -164,27 +169,28 @@ async function loadTasksAdmin() {
 
   tasks.forEach(t => {
     const orderObj = (t.order && typeof t.order === "object") ? t.order : {};
+    const passwordObj = (t.password && typeof t.password === "object") ? t.password : {};
     const card = document.createElement("div");
     card.className = "card";
     card.style.marginBottom = "14px";
     card.innerHTML = `
       <div class="row" style="justify-content:space-between;">
-        <span>${t.title} <span class="tag">باسورد: ${t.password}</span></span>
+        <span>${t.title}</span>
         <button class="btn ghost btn-delete-task" style="width:auto;">حذف</button>
       </div>
-      <p class="muted" style="margin-top:8px;">ترتيب الظهور لكل عشيرة:</p>
-      <div class="grid task-order-edit"></div>
-      <button class="btn btn-save-order" style="margin-top:10px;">حفظ الترتيب</button>
+      <p class="muted" style="margin-top:8px;">ترتيب وباسورد كل عشيرة لهذه المهمة:</p>
+      <div class="task-order-edit"></div>
+      <button class="btn btn-save-order" style="margin-top:10px;">حفظ التعديلات</button>
     `;
     tasksAdminList.appendChild(card);
 
     const orderEditDiv = card.querySelector(".task-order-edit");
-    renderTaskOrderInputs(orderEditDiv, orderObj);
+    renderTaskGroupInputs(orderEditDiv, orderObj, passwordObj);
 
     card.querySelector(".btn-save-order").addEventListener("click", async () => {
-      const newOrder = collectOrderMap(orderEditDiv);
-      await updateDoc(doc(db, "tasks", t.id), { order: newOrder });
-      showToast("تم تحديث الترتيب");
+      const { order, password } = collectGroupData(orderEditDiv);
+      await updateDoc(doc(db, "tasks", t.id), { order, password });
+      showToast("تم حفظ التعديلات");
     });
 
     card.querySelector(".btn-delete-task").addEventListener("click", async () => {
@@ -197,19 +203,23 @@ async function loadTasksAdmin() {
 }
 
 btnAddTask.addEventListener("click", async () => {
-  if (!taskTitleInp.value || !taskPasswordInp.value) {
-    showToast("اكتب العنوان والباسورد على الأقل");
+  if (!taskTitleInp.value) {
+    showToast("اكتب عنوان المهمة على الأقل");
     return;
   }
-  const order = collectOrderMap(taskOrderPerGroupDiv);
+  const { order, password } = collectGroupData(taskOrderPerGroupDiv);
+  if (!Object.keys(password).length) {
+    showToast("لازم تكتب باسورد لعشيرة واحدة على الأقل");
+    return;
+  }
   await addDoc(collection(db, "tasks"), {
     title: taskTitleInp.value,
-    password: taskPasswordInp.value,
     content: taskContentInp.value,
-    order // مابّة: { "اسم العشيرة": رقم_الترتيب, ... }
+    order,    // مابّة: { "اسم العشيرة": رقم_الترتيب, ... }
+    password  // مابّة: { "اسم العشيرة": "باسوردها", ... }
   });
-  taskTitleInp.value = ""; taskPasswordInp.value = ""; taskContentInp.value = "";
-  renderTaskOrderInputs(taskOrderPerGroupDiv);
+  taskTitleInp.value = ""; taskContentInp.value = "";
+  renderTaskGroupInputs(taskOrderPerGroupDiv);
   showToast("تمت إضافة المهمة");
   loadTasksAdmin();
 });
@@ -257,7 +267,7 @@ btnAddUser.addEventListener("click", async () => {
   showToast("تمت إضافة المستخدم");
   loadUsersAdmin();
   await loadGroups();
-  renderTaskOrderInputs(taskOrderPerGroupDiv);
+  renderTaskGroupInputs(taskOrderPerGroupDiv);
 });
 
 // ------------------------------------------------------------
@@ -324,7 +334,7 @@ async function initPanel() {
   fillSettingsForm();
   renderShapeButtons();
   await loadGroups();
-  renderTaskOrderInputs(taskOrderPerGroupDiv);
+  renderTaskGroupInputs(taskOrderPerGroupDiv);
   await loadTasksAdmin();
   await loadUsersAdmin();
 }
