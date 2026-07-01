@@ -28,42 +28,25 @@ btnLogout.addEventListener("click", () => {
 // 1) تحميل عتبات الألوان (config/settings) ثم تتبّع سكور المجموعة لحظياً
 // ------------------------------------------------------------
 async function init() {
-  let greenThreshold = 150;
-  let redThreshold = 50;
-
-  try {
-    const cfgSnap = await getDoc(doc(db, "config", "settings"));
-    if (cfgSnap.exists()) {
-      const cfg = cfgSnap.data();
-      greenThreshold = cfg.greenThreshold ?? greenThreshold;
-      redThreshold = cfg.redThreshold ?? redThreshold;
-    }
-  } catch (e) {
-    console.error("خطأ في تحميل الإعدادات:", e);
-  }
-
   const groupRef = doc(db, "groups", me.group);
-
   onSnapshot(groupRef, (snap) => {
+    const level = snap.exists() ? (snap.data().indicatorLevel ?? "red") : "red";
     const score = snap.exists() ? (snap.data().score ?? 0) : 0;
-    updateIndicator(score, greenThreshold, redThreshold);
-  }, (err) => {
-    console.error("خطأ في تتبع السكور:", err);
+    updateIndicator(level, score);
   });
 }
 
-function updateIndicator(score, greenThreshold, redThreshold) {
-  let color, percent;
-  if (score >= greenThreshold) { color="green"; percent=10; labelEl.textContent="أخضر"; }
-  else if (score <= redThreshold) { color="red"; percent=90; labelEl.textContent="أحمر"; }
-  else {
-    color="yellow";
-    const ratio = (score - redThreshold) / (greenThreshold - redThreshold);
-    percent = 75 - ratio * 50;
-    labelEl.textContent = "أصفر";
-  }
-  labelEl.className = "indicator-label " + color;
-  markerEl.style.bottom = percent + "%";
+function updateIndicator(level, score) {
+  scorePillEl.textContent = `السكور: ${score}`;
+  const map = {
+    red:    { color:"red",    percent: 90, text: "أحمر" },
+    yellow: { color:"yellow", percent: 50, text: "أصفر" },
+    green:  { color:"green",  percent: 10, text: "أخضر" },
+  };
+  const s = map[level] || map.red;
+  labelEl.textContent = s.text;
+  labelEl.className = "indicator-label " + s.color;
+  markerEl.style.bottom = s.percent + "%";
 }
 
 init();

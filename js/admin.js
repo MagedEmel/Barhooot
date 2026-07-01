@@ -1,23 +1,33 @@
 import {
-  db, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, getDocs, increment, onSnapshot
+  db,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+  increment,
+  onSnapshot,
 } from "./firebase-config.js";
 
-const gate          = document.getElementById("gate");
-const panel         = document.getElementById("panel");
-const adminPassInp  = document.getElementById("admin-password");
-const btnGate       = document.getElementById("btn-gate");
-const gateError     = document.getElementById("gate-error");
-const btnLogout     = document.getElementById("btn-logout");
+const gate = document.getElementById("gate");
+const panel = document.getElementById("panel");
+const adminPassInp = document.getElementById("admin-password");
+const btnGate = document.getElementById("btn-gate");
+const gateError = document.getElementById("gate-error");
+const btnLogout = document.getElementById("btn-logout");
 
 const ambience = document.getElementById("bg-ambience");
-ambience.play().catch(()=>{});
+ambience.play().catch(() => {});
 
 // ------------------------------------------------------------
 // 0) تبويبات
 // ------------------------------------------------------------
-document.querySelectorAll(".tab-btn").forEach(btn => {
+document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.add("hidden"));
+    document.querySelectorAll(".tab").forEach((t) => t.classList.add("hidden"));
     document.getElementById(btn.dataset.tab).classList.remove("hidden");
   });
 });
@@ -25,13 +35,20 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 // ------------------------------------------------------------
 // 1) بوابة الباسورد
 // ------------------------------------------------------------
-let settingsCache = { greenThreshold: 10, redThreshold: -10, shapes: [], adminPassword: "" };
+let settingsCache = {
+  greenThreshold: 10,
+  redThreshold: -10,
+  shapes: [],
+  adminPassword: "",
+};
 
 async function checkGate() {
   try {
     const snap = await getDoc(doc(db, "config", "settings"));
     if (snap.exists()) settingsCache = { ...settingsCache, ...snap.data() };
-  } catch (e) { console.error(e); }
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 btnGate.addEventListener("click", async () => {
@@ -40,23 +57,28 @@ btnGate.addEventListener("click", async () => {
     gate.classList.add("hidden");
     panel.classList.remove("hidden");
     ambience.volume = 0.3;
-    ambience.play().catch(()=>{});
+    ambience.play().catch(() => {});
     document.querySelector('.tab-btn[data-tab="tab-points"]').click();
     initPanel();
   } else {
     gateError.classList.remove("hidden");
   }
 });
-adminPassInp.addEventListener("keydown", e => { if (e.key === "Enter") btnGate.click(); });
+adminPassInp.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") btnGate.click();
+});
 
-btnLogout.addEventListener("click", () => window.location.href = "index.html");
+btnLogout.addEventListener(
+  "click",
+  () => (window.location.href = "index.html"),
+);
 
 // ------------------------------------------------------------
 // 2) تاب النقاط
 // ------------------------------------------------------------
-const groupSelect    = document.getElementById("group-select");
+const groupSelect = document.getElementById("group-select");
 const currentScoreEl = document.getElementById("current-score");
-const shapesButtons  = document.getElementById("shapes-buttons");
+const shapesButtons = document.getElementById("shapes-buttons");
 const customPointsInp = document.getElementById("custom-points");
 const btnCustomPoints = document.getElementById("btn-custom-points");
 const groupsTableBody = document.querySelector("#groups-table tbody");
@@ -65,34 +87,76 @@ let groupsCache = []; // [{id, score}]
 
 async function loadGroups() {
   const snap = await getDocs(collection(db, "groups"));
-  groupsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  groupsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
-  groupSelect.innerHTML = groupsCache.map(g => `<option value="${g.id}">${g.id}</option>`).join("");
+  groupSelect.innerHTML = groupsCache
+    .map((g) => `<option value="${g.id}">${g.id}</option>`)
+    .join("");
   renderGroupsTable();
+  // نملى سيليكت إضافة المستخدم بأسماء المجموعات
+  const userGroupSel = document.getElementById("user-group");
+  if (userGroupSel) {
+    userGroupSel.innerHTML = groupsCache
+      .map((g) => `<option value="${g.id}">${g.id}</option>`)
+      .join("");
+  }
   if (groupsCache.length) updateCurrentScoreDisplay(groupSelect.value);
 }
 
 function renderGroupsTable() {
   groupsTableBody.innerHTML = groupsCache
-    .map(g => `<tr><td>${g.id}</td><td>${g.score ?? 0}</td></tr>`)
+    .map(
+      (g) => `
+    <tr>
+      <td>${g.id}</td>
+      <td>${g.score ?? 0}</td>
+      <td>
+        <div class="row" style="gap:5px; flex-wrap:wrap;">
+          <button class="ind-btn" data-group="${g.id}" data-level="red"
+            style="background:rgba(255,51,51,.2);color:#ff3333;border:1px solid #ff3333;border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "red" ? "box-shadow:0 0 8px #ff3333;font-weight:900;" : "opacity:.5;"}">أحمر</button>
+          <button class="ind-btn" data-group="${g.id}" data-level="yellow"
+            style="background:rgba(232,148,58,.2);color:var(--glow);border:1px solid var(--glow);border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "yellow" ? "box-shadow:0 0 8px var(--glow);font-weight:900;" : "opacity:.5;"}">أصفر</button>
+          <button class="ind-btn" data-group="${g.id}" data-level="green"
+            style="background:rgba(34,197,94,.2);color:#22c55e;border:1px solid #22c55e;border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "green" ? "box-shadow:0 0 8px #22c55e;font-weight:900;" : "opacity:.5;"}">أخضر</button>
+        </div>
+      </td>
+    </tr>
+  `,
+    )
     .join("");
+
+  groupsTableBody.querySelectorAll(".ind-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      await updateDoc(doc(db, "groups", btn.dataset.group), {
+        indicatorLevel: btn.dataset.level,
+      });
+      showToast(`✅ مؤشر ${btn.dataset.group} بقى ${btn.dataset.level}`);
+      await loadGroups();
+    });
+  });
 }
 
 function updateCurrentScoreDisplay(groupId) {
-  const g = groupsCache.find(x => x.id === groupId);
+  const g = groupsCache.find((x) => x.id === groupId);
   currentScoreEl.textContent = g ? (g.score ?? 0) : "--";
 }
 
-groupSelect.addEventListener("change", () => updateCurrentScoreDisplay(groupSelect.value));
+groupSelect.addEventListener("change", () =>
+  updateCurrentScoreDisplay(groupSelect.value),
+);
 
 function renderShapeButtons() {
-  shapesButtons.innerHTML = (settingsCache.shapes || []).map((s, i) => `
+  shapesButtons.innerHTML = (settingsCache.shapes || [])
+    .map(
+      (s, i) => `
     <button class="btn shape-btn" data-value="${s.value}">
       ${s.label}<br><span class="muted">(${s.value > 0 ? "+" : ""}${s.value})</span>
     </button>
-  `).join("");
+  `,
+    )
+    .join("");
 
-  shapesButtons.querySelectorAll(".shape-btn").forEach(btn => {
+  shapesButtons.querySelectorAll(".shape-btn").forEach((btn) => {
     btn.addEventListener("click", () => applyPoints(Number(btn.dataset.value)));
   });
 }
@@ -102,7 +166,9 @@ async function applyPoints(value) {
   if (!groupId) return;
   try {
     await updateDoc(doc(db, "groups", groupId), { score: increment(value) });
-    showToast(`تم ${value >= 0 ? "إضافة" : "خصم"} ${Math.abs(value)} نقطة لمجموعة ${groupId}`);
+    showToast(
+      `تم ${value >= 0 ? "إضافة" : "خصم"} ${Math.abs(value)} نقطة لمجموعة ${groupId}`,
+    );
     await loadGroups();
     groupSelect.value = groupId;
     updateCurrentScoreDisplay(groupId);
@@ -129,12 +195,18 @@ const btnAddTask = document.getElementById("btn-add-task");
 const tasksAdminList = document.getElementById("tasks-admin-list");
 
 // بيبني صف فيه "ترتيب" و"باسورد" لكل عشيرة موجودة
-function renderTaskGroupInputs(container, existingOrder = {}, existingPassword = {}) {
+function renderTaskGroupInputs(
+  container,
+  existingOrder = {},
+  existingPassword = {},
+) {
   if (!groupsCache.length) {
     container.innerHTML = `<p class="muted">لسه مفيش عشائر مُضافة، ضيف مستخدمين/مجموعات الأول.</p>`;
     return;
   }
-  container.innerHTML = groupsCache.map(g => `
+  container.innerHTML = groupsCache
+    .map(
+      (g) => `
     <div class="group-task-row">
       <span class="group-task-row-name">${g.id}</span>
       <input class="input order-for-group" data-group="${g.id}" type="number"
@@ -142,16 +214,18 @@ function renderTaskGroupInputs(container, existingOrder = {}, existingPassword =
       <input class="input password-for-group" data-group="${g.id}" type="text"
              placeholder="باسورد العشيرة دي" value="${existingPassword[g.id] ?? ""}">
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 }
 
 function collectGroupData(container) {
   const order = {};
   const password = {};
-  container.querySelectorAll(".order-for-group").forEach(inp => {
+  container.querySelectorAll(".order-for-group").forEach((inp) => {
     if (inp.value !== "") order[inp.dataset.group] = Number(inp.value);
   });
-  container.querySelectorAll(".password-for-group").forEach(inp => {
+  container.querySelectorAll(".password-for-group").forEach((inp) => {
     if (inp.value !== "") password[inp.dataset.group] = inp.value;
   });
   return { order, password };
@@ -159,7 +233,7 @@ function collectGroupData(container) {
 
 async function loadTasksAdmin() {
   const snap = await getDocs(collection(db, "tasks"));
-  const tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const tasks = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
   tasksAdminList.innerHTML = "";
   if (!tasks.length) {
@@ -167,9 +241,10 @@ async function loadTasksAdmin() {
     return;
   }
 
-  tasks.forEach(t => {
-    const orderObj = (t.order && typeof t.order === "object") ? t.order : {};
-    const passwordObj = (t.password && typeof t.password === "object") ? t.password : {};
+  tasks.forEach((t) => {
+    const orderObj = t.order && typeof t.order === "object" ? t.order : {};
+    const passwordObj =
+      t.password && typeof t.password === "object" ? t.password : {};
     const card = document.createElement("div");
     card.className = "card";
     card.style.marginBottom = "14px";
@@ -187,18 +262,22 @@ async function loadTasksAdmin() {
     const orderEditDiv = card.querySelector(".task-order-edit");
     renderTaskGroupInputs(orderEditDiv, orderObj, passwordObj);
 
-    card.querySelector(".btn-save-order").addEventListener("click", async () => {
-      const { order, password } = collectGroupData(orderEditDiv);
-      await updateDoc(doc(db, "tasks", t.id), { order, password });
-      showToast("تم حفظ التعديلات");
-    });
+    card
+      .querySelector(".btn-save-order")
+      .addEventListener("click", async () => {
+        const { order, password } = collectGroupData(orderEditDiv);
+        await updateDoc(doc(db, "tasks", t.id), { order, password });
+        showToast("تم حفظ التعديلات");
+      });
 
-    card.querySelector(".btn-delete-task").addEventListener("click", async () => {
-      if (!confirm(`تأكيد حذف "${t.title}"؟`)) return;
-      await deleteDoc(doc(db, "tasks", t.id));
-      showToast("تم حذف المهمة");
-      loadTasksAdmin();
-    });
+    card
+      .querySelector(".btn-delete-task")
+      .addEventListener("click", async () => {
+        if (!confirm(`تأكيد حذف "${t.title}"؟`)) return;
+        await deleteDoc(doc(db, "tasks", t.id));
+        showToast("تم حذف المهمة");
+        loadTasksAdmin();
+      });
   });
 }
 
@@ -215,10 +294,11 @@ btnAddTask.addEventListener("click", async () => {
   await addDoc(collection(db, "tasks"), {
     title: taskTitleInp.value,
     content: taskContentInp.value,
-    order,    // مابّة: { "اسم العشيرة": رقم_الترتيب, ... }
-    password  // مابّة: { "اسم العشيرة": "باسوردها", ... }
+    order, // مابّة: { "اسم العشيرة": رقم_الترتيب, ... }
+    password, // مابّة: { "اسم العشيرة": "باسوردها", ... }
   });
-  taskTitleInp.value = ""; taskContentInp.value = "";
+  taskTitleInp.value = "";
+  taskContentInp.value = "";
   renderTaskGroupInputs(taskOrderPerGroupDiv);
   showToast("تمت إضافة المهمة");
   loadTasksAdmin();
@@ -235,14 +315,21 @@ const usersTableBody = document.querySelector("#users-table tbody");
 
 async function loadUsersAdmin() {
   const snap = await getDocs(collection(db, "users"));
-  const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  usersTableBody.innerHTML = users.map(u => `
+  const users = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  usersTableBody.innerHTML = users
+    .map(
+      (u) => `
     <tr><td>${u.name}</td><td>${u.group}</td><td>${roleLabel(u.role)}</td></tr>
-  `).join("");
+  `,
+    )
+    .join("");
 }
 
 function roleLabel(r) {
-  return r === "admin" ? "أدمن" : r === "leader" ? "ليدر" : "يوزر";
+  if (r === "admin") return "أدمن";
+  if (r === "leader") return "ليدر";
+  if (r === "lecturer") return "محاضر";
+  return "يوزر";
 }
 
 btnAddUser.addEventListener("click", async () => {
@@ -253,7 +340,7 @@ btnAddUser.addEventListener("click", async () => {
   await addDoc(collection(db, "users"), {
     name: userNameInp.value.trim(),
     group: userGroupInp.value.trim(),
-    role: userRoleSel.value
+    role: userRoleSel.value,
   });
 
   // لو المجموعة دي جديدة، نعمل لها دوكيومنت سكور = 0
@@ -263,7 +350,8 @@ btnAddUser.addEventListener("click", async () => {
     await setDoc(groupRef, { score: 0 });
   }
 
-  userNameInp.value = ""; userGroupInp.value = "";
+  userNameInp.value = "";
+  userGroupInp.value = "";
   showToast("تمت إضافة المستخدم");
   loadUsersAdmin();
   await loadGroups();
@@ -274,21 +362,30 @@ btnAddUser.addEventListener("click", async () => {
 // 5) تاب الإعدادات
 // ------------------------------------------------------------
 const settingGreenInp = document.getElementById("setting-green");
-const settingRedInp   = document.getElementById("setting-red");
+const settingRedInp = document.getElementById("setting-red");
 const shapesSettingsDiv = document.getElementById("shapes-settings");
 const btnSaveSettings = document.getElementById("btn-save-settings");
 
 function renderShapesSettingsInputs() {
-  const shapes = settingsCache.shapes && settingsCache.shapes.length === 3
-    ? settingsCache.shapes
-    : [{label:"شكل 1", value:5},{label:"شكل 2", value:10},{label:"شكل 3", value:-10}];
+  const shapes =
+    settingsCache.shapes && settingsCache.shapes.length === 3
+      ? settingsCache.shapes
+      : [
+          { label: "شكل 1", value: 5 },
+          { label: "شكل 2", value: 10 },
+          { label: "شكل 3", value: -10 },
+        ];
 
-  shapesSettingsDiv.innerHTML = shapes.map((s, i) => `
+  shapesSettingsDiv.innerHTML = shapes
+    .map(
+      (s, i) => `
     <div class="row" style="margin-top:10px;">
       <input class="input shape-label" data-i="${i}" value="${s.label}" placeholder="اسم الشكل">
       <input class="input shape-value" data-i="${i}" type="number" value="${s.value}" placeholder="القيمة">
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 }
 
 function fillSettingsForm() {
@@ -298,15 +395,19 @@ function fillSettingsForm() {
 }
 
 btnSaveSettings.addEventListener("click", async () => {
-  const labels = [...document.querySelectorAll(".shape-label")].map(i => i.value);
-  const values = [...document.querySelectorAll(".shape-value")].map(i => Number(i.value));
+  const labels = [...document.querySelectorAll(".shape-label")].map(
+    (i) => i.value,
+  );
+  const values = [...document.querySelectorAll(".shape-value")].map((i) =>
+    Number(i.value),
+  );
   const shapes = labels.map((label, i) => ({ label, value: values[i] }));
 
   const newSettings = {
     ...settingsCache,
     greenThreshold: Number(settingGreenInp.value),
     redThreshold: Number(settingRedInp.value),
-    shapes
+    shapes,
   };
 
   await setDoc(doc(db, "config", "settings"), newSettings, { merge: true });
@@ -326,6 +427,44 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 2600);
 }
 
+function startSubmissionsFeed() {
+  const feedEl = document.getElementById("submissions-feed");
+  if (!feedEl) return;
+  const { onSnapshot, collection, query, orderBy, limit } =
+    window.__fsExtras || {};
+  // بنستخدم onSnapshot اللي عندنا بالفعل
+  import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(
+    ({ onSnapshot, collection, query, orderBy, limit }) => {
+      const q = query(
+        collection(db, "submissions"),
+        orderBy("createdAt", "desc"),
+        limit(30),
+      );
+      onSnapshot(q, (snap) => {
+        feedEl.innerHTML = snap.empty
+          ? `<p class="muted">لا توجد إرسالات بعد.</p>`
+          : snap.docs
+              .map((d) => {
+                const s = d.data();
+                const t = s.createdAt?.toDate?.();
+                const time = t ? t.toLocaleTimeString("ar-EG") : "الآن";
+                return `
+              <div class="card" style="margin-bottom:10px; padding:14px 18px;">
+                <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                  <span style="color:var(--sand); font-weight:700;">${s.group}</span>
+                  <span class="tag">${time}</span>
+                </div>
+                <p class="muted" style="margin-top:6px;">📋 ${s.workshop}</p>
+                <p style="color:var(--green); font-weight:700; margin-top:4px;">+${s.points} نقطة</p>
+                <p class="muted" style="font-size:12px;">المحاضر: ${s.lecturerName}</p>
+              </div>
+            `;
+              })
+              .join("");
+      });
+    },
+  );
+}
 // ------------------------------------------------------------
 // 7) تشغيل اللوحة كاملة بعد الدخول
 // ------------------------------------------------------------
@@ -337,4 +476,5 @@ async function initPanel() {
   renderTaskGroupInputs(taskOrderPerGroupDiv);
   await loadTasksAdmin();
   await loadUsersAdmin();
+  startSubmissionsFeed();
 }

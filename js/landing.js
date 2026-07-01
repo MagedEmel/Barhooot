@@ -1,19 +1,19 @@
 import { db, collection, getDocs } from "./firebase-config.js";
 
-const nameInput      = document.getElementById("name-input");
+const nameInput = document.getElementById("name-input");
 const suggestionsBox = document.getElementById("name-suggestions");
-const btnEnter    = document.getElementById("btn-enter");
-const errorMsg    = document.getElementById("error-msg");
-const screenSelect  = document.getElementById("screen-select");
+const btnEnter = document.getElementById("btn-enter");
+const errorMsg = document.getElementById("error-msg");
+const screenSelect = document.getElementById("screen-select");
 const screenWelcome = document.getElementById("screen-welcome");
-const welcomeText   = document.getElementById("welcome-text");
-const groupNameEl   = document.getElementById("group-name");
-const btnContinue   = document.getElementById("btn-continue");
+const welcomeText = document.getElementById("welcome-text");
+const groupNameEl = document.getElementById("group-name");
+const btnContinue = document.getElementById("btn-continue");
 
 const confirmOverlay = document.getElementById("confirm-overlay");
-const confirmNameEl  = document.getElementById("confirm-name");
-const confirmBack    = document.getElementById("confirm-back");
-const confirmYes     = document.getElementById("confirm-yes");
+const confirmNameEl = document.getElementById("confirm-name");
+const confirmBack = document.getElementById("confirm-back");
+const confirmYes = document.getElementById("confirm-yes");
 
 const ambience = document.getElementById("bg-ambience");
 const whispers = document.getElementById("bg-whispers");
@@ -21,8 +21,8 @@ const sfxBreak = document.getElementById("sfx-break");
 
 ambience.volume = 0.35;
 whispers.volume = 0.25;
-ambience.play().catch(()=>{});
-whispers.play().catch(()=>{});
+ambience.play().catch(() => {});
+whispers.play().catch(() => {});
 
 let usersCache = []; // [{id, name, group, role}]
 let selectedUser = null;
@@ -50,7 +50,7 @@ if (remembered) {
 async function loadNames() {
   try {
     const snap = await getDocs(collection(db, "users"));
-    usersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    usersCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (e) {
     console.error("خطأ في تحميل الأسماء:", e);
     showError("في عطل في الاتصال بالعشيرة... حاول تاني.");
@@ -69,7 +69,7 @@ nameInput.addEventListener("input", () => {
   clearError();
   const typed = nameInput.value.trim();
 
-  const exactMatch = usersCache.find(u => u.name.trim() === typed);
+  const exactMatch = usersCache.find((u) => u.name.trim() === typed);
   selectedUser = exactMatch || null;
   btnEnter.disabled = !selectedUser;
 
@@ -83,7 +83,7 @@ function renderSuggestions(typed) {
     return;
   }
   const matches = usersCache
-    .filter(u => u.name.toLowerCase().includes(typed.toLowerCase()))
+    .filter((u) => u.name.toLowerCase().includes(typed.toLowerCase()))
     .slice(0, 5);
 
   if (!matches.length) {
@@ -92,15 +92,15 @@ function renderSuggestions(typed) {
     return;
   }
 
-  suggestionsBox.innerHTML = matches.map(u =>
-    `<div class="sug-item" data-name="${u.name}">${u.name}</div>`
-  ).join("");
+  suggestionsBox.innerHTML = matches
+    .map((u) => `<div class="sug-item" data-name="${u.name}">${u.name}</div>`)
+    .join("");
   suggestionsBox.classList.remove("hidden");
 
-  suggestionsBox.querySelectorAll(".sug-item").forEach(el => {
+  suggestionsBox.querySelectorAll(".sug-item").forEach((el) => {
     el.addEventListener("click", () => {
       nameInput.value = el.dataset.name;
-      selectedUser = usersCache.find(u => u.name === el.dataset.name) || null;
+      selectedUser = usersCache.find((u) => u.name === el.dataset.name) || null;
       btnEnter.disabled = !selectedUser;
       suggestionsBox.classList.add("hidden");
       suggestionsBox.innerHTML = "";
@@ -136,9 +136,9 @@ confirmYes.addEventListener("click", () => {
 // 3) تأكيد الدخول فعليًا: تخزين دائم + عرض رسالة الترحيب
 // ------------------------------------------------------------
 function proceedEntry(user) {
-  ambience.play().catch(()=>{});
-  whispers.play().catch(()=>{});
-  sfxBreak.play().catch(()=>{});
+  ambience.play().catch(() => {});
+  whispers.play().catch(() => {});
+  sfxBreak.play().catch(() => {});
 
   // تخزين دائم (يفضل بعد إقفال المتصفح) + تخزين الجلسة الحالية
   localStorage.setItem("clan_user", JSON.stringify(user));
@@ -168,6 +168,9 @@ btnContinue.addEventListener("click", () => {
       break;
     case "leader":
       window.location.href = "leader.html";
+      break;
+    case "lecturer":
+      window.location.href = "lecturer.html";
       break;
     default:
       window.location.href = "user.html";

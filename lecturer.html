@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المحاضر - عشيرة برهوت</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+</head>
+<body>
+  <div class="vignette"></div>
+  <div class="noise"></div>
+  <div class="fire-bg">
+    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
+    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
+  </div>
+
+  <div class="wrap">
+    <h1>لوحة المحاضر</h1>
+    <p class="subtitle" id="user-sub">جاري التحميل...</p>
+
+    <div class="card fade-in" style="margin-top:26px;">
+      <label class="muted">اختر العشيرة</label>
+      <select id="lec-group" class="input" style="margin-top:8px; text-align:right;"></select>
+
+      <label class="muted" style="margin-top:14px; display:block;">اسم الورشة والشيفت</label>
+      <input id="lec-workshop" class="input" placeholder="مثال: ورشة القيادة - الشيفت الأول" style="margin-top:8px;">
+
+      <label class="muted" style="margin-top:14px; display:block;">النقاط المكتسبة</label>
+      <input id="lec-points" type="number" class="input" placeholder="مثال: 15" style="margin-top:8px;">
+
+      <button id="btn-submit" class="btn">إرسال النقاط</button>
+      <p id="lec-error" class="muted hidden" style="color:var(--crimson); text-align:center; margin-top:8px;"></p>
+    </div>
+
+    <div class="center" style="margin-top:28px;">
+      <button id="btn-logout" class="btn ghost">خروج</button>
+    </div>
+  </div>
+
+  <audio id="bg-ambience" loop preload="auto" autoplay>
+    <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script type="module" src="js/lecturer.js"></script>
+  <script type="module">
+    import { startAutoUpdateWatcher } from "./js/version-check.js";
+    startAutoUpdateWatcher();
+  </script>
+</body>
+</html>
