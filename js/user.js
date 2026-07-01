@@ -5,7 +5,6 @@ ambience.play().catch(()=>{});
 
 const subEl       = document.getElementById("user-sub");
 const markerEl    = document.getElementById("marker");
-const labelEl     = document.getElementById("indicator-label");
 const scorePillEl = document.getElementById("score-pill");
 const btnLogout   = document.getElementById("btn-logout");
 
@@ -30,23 +29,22 @@ btnLogout.addEventListener("click", () => {
 async function init() {
   const groupRef = doc(db, "groups", me.group);
   onSnapshot(groupRef, (snap) => {
-    const level = snap.exists() ? (snap.data().indicatorLevel ?? "red") : "red";
+    const level = snap.exists() ? (snap.data().indicatorLevel ?? 90) : 90;
     const score = snap.exists() ? (snap.data().score ?? 0) : 0;
     updateIndicator(level, score);
   });
 }
 
 function updateIndicator(level, score) {
-  scorePillEl.textContent = `السكور: ${score}`;
-  const map = {
-    red:    { color:"red",    percent: 90, text: "أحمر" },
-    yellow: { color:"yellow", percent: 50, text: "أصفر" },
-    green:  { color:"green",  percent: 10, text: "أخضر" },
-  };
-  const s = map[level] || map.red;
-  labelEl.textContent = s.text;
-  labelEl.className = "indicator-label " + s.color;
-  markerEl.style.bottom = s.percent + "%";
+  const percent = typeof level === "number" ? level : 90;
+  markerEl.style.bottom = percent + "%";
+  if (percent >= 67) {
+    labelEl.textContent = "أحمر"; labelEl.className = "indicator-label red";
+  } else if (percent >= 34) {
+    labelEl.textContent = "أصفر"; labelEl.className = "indicator-label yellow";
+  } else {
+    labelEl.textContent = "أخضر"; labelEl.className = "indicator-label green";
+  }
 }
 
 init();

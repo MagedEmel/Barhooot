@@ -111,14 +111,10 @@ function renderGroupsTable() {
       <td>${g.id}</td>
       <td>${g.score ?? 0}</td>
       <td>
-        <div class="row" style="gap:5px; flex-wrap:wrap;">
-          <button class="ind-btn" data-group="${g.id}" data-level="red"
-            style="background:rgba(255,51,51,.2);color:#ff3333;border:1px solid #ff3333;border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "red" ? "box-shadow:0 0 8px #ff3333;font-weight:900;" : "opacity:.5;"}">أحمر</button>
-          <button class="ind-btn" data-group="${g.id}" data-level="yellow"
-            style="background:rgba(232,148,58,.2);color:var(--glow);border:1px solid var(--glow);border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "yellow" ? "box-shadow:0 0 8px var(--glow);font-weight:900;" : "opacity:.5;"}">أصفر</button>
-          <button class="ind-btn" data-group="${g.id}" data-level="green"
-            style="background:rgba(34,197,94,.2);color:#22c55e;border:1px solid #22c55e;border-radius:20px;padding:3px 10px;cursor:pointer;font-size:12px;${g.indicatorLevel === "green" ? "box-shadow:0 0 8px #22c55e;font-weight:900;" : "opacity:.5;"}">أخضر</button>
-        </div>
+        <button class="ind-btn" data-group="${g.id}" data-level="${g.indicatorLevel ?? 90}"
+          style="background:rgba(196,117,42,.15);color:var(--glow);border:1px solid var(--ember);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:12px;">
+          تعديل (${g.indicatorLevel ?? 90})
+        </button>
       </td>
     </tr>
   `,
@@ -126,13 +122,9 @@ function renderGroupsTable() {
     .join("");
 
   groupsTableBody.querySelectorAll(".ind-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      await updateDoc(doc(db, "groups", btn.dataset.group), {
-        indicatorLevel: btn.dataset.level,
-      });
-      showToast(`✅ مؤشر ${btn.dataset.group} بقى ${btn.dataset.level}`);
-      await loadGroups();
-    });
+    btn.addEventListener("click", () =>
+      openIndicatorModal(btn.dataset.group, Number(btn.dataset.level)),
+    );
   });
 }
 
@@ -465,6 +457,64 @@ function startSubmissionsFeed() {
     },
   );
 }
+
+// -------------------- مودال التحكم الدقيق في المؤشر --------------------
+let activeIndicatorGroup = null;
+const indModal = document.getElementById("indicator-modal");
+const indSlider = document.getElementById("indicator-slider");
+const indLabel = document.getElementById("modal-indicator-label");
+const sliderValLbl = document.getElementById("slider-val-label");
+const indGroupName = document.getElementById("modal-group-name");
+const modalCancelInd = document.getElementById("modal-cancel-ind");
+const modalSaveInd = document.getElementById("modal-save-ind");
+
+function openIndicatorModal(groupId, currentVal) {
+  activeIndicatorGroup = groupId;
+  indGroupName.textContent = groupId;
+  indSlider.value = currentVal;
+  updateSliderUI(currentVal);
+  indModal.classList.remove("hidden");
+  document.querySelectorAll(".preset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      indSlider.value = btn.dataset.val;
+      updateSliderUI(Number(btn.dataset.val));
+    });
+  });
+}
+
+function updateSliderUI(val) {
+  sliderValLbl.textContent = `القيمة: ${val}`;
+  if (val >= 67) {
+    indLabel.textContent = "أحمر";
+    indLabel.className = "indicator-label red";
+  } else if (val >= 34) {
+    indLabel.textContent = "أصفر";
+    indLabel.className = "indicator-label yellow";
+  } else {
+    indLabel.textContent = "أخضر";
+    indLabel.className = "indicator-label green";
+  }
+}
+
+indSlider.addEventListener("input", () =>
+  updateSliderUI(Number(indSlider.value)),
+);
+
+modalCancelInd.addEventListener("click", () =>
+  indModal.classList.add("hidden"),
+);
+
+modalSaveInd.addEventListener("click", async () => {
+  if (!activeIndicatorGroup) return;
+  const val = Number(indSlider.value);
+  await updateDoc(doc(db, "groups", activeIndicatorGroup), {
+    indicatorLevel: val,
+  });
+  showToast(`✅ تم تحديث مؤشر ${activeIndicatorGroup} → ${val}`);
+  indModal.classList.add("hidden");
+  await loadGroups();
+});
+
 // ------------------------------------------------------------
 // 7) تشغيل اللوحة كاملة بعد الدخول
 // ------------------------------------------------------------

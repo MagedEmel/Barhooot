@@ -1,148 +1,409 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الأدمن - عشيرة الظلام</title>
-<link rel="stylesheet" href="css/main.css">
-    <link rel="icon" href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الأدمن - عشيرة الظلام</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link
+      rel="icon"
+      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+  </head>
+  <body>
+    <div class="vignette"></div>
+    <div class="noise"></div>
+    <div class="fire-bg">
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+    </div>
 
-</head>
-<body>
+    <div class="wrap">
+      <!-- بوابة الباسورد -->
+      <section id="gate" class="fade-in">
+        <h1 class="glitch" data-text="بوابة الأدمن">بوابة الأدمن</h1>
+        <div class="card" style="margin-top: 24px">
+          <label class="muted">باسورد الأدمن</label>
+          <input
+            id="admin-password"
+            type="password"
+            class="input"
+            placeholder="••••••" />
+          <button id="btn-gate" class="btn">دخول</button>
+          <p
+            id="gate-error"
+            class="muted hidden"
+            style="color: #ff5a5a; margin-top: 10px">
+            باسورد غلط.
+          </p>
+        </div>
+      </section>
 
-  <div class="vignette"></div>
-  <div class="noise"></div>
-  <div class="fire-bg">
-    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
-    <div class="flame"></div><div class="flame"></div><div class="flame"></div>
-  </div>
+      <!-- لوحة الأدمن -->
+      <section id="panel" class="hidden">
+        <h1 class="glitch" data-text="لوحة الأدمن">لوحة الأدمن</h1>
 
-  <div class="wrap">
+        <div
+          class="row"
+          style="
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+          ">
+          <button class="btn ghost tab-btn" data-tab="tab-points">
+            النقاط
+          </button>
+          <button class="btn ghost tab-btn" data-tab="tab-tasks">المهام</button>
+          <button class="btn ghost tab-btn" data-tab="tab-users">
+            المستخدمين
+          </button>
+          <button class="btn ghost tab-btn" data-tab="tab-lecturers">
+            المحاضرين
+          </button>
+          <button class="btn ghost tab-btn" data-tab="tab-settings">
+            الإعدادات
+          </button>
+        </div>
 
-    <!-- بوابة الباسورد -->
-    <section id="gate" class="fade-in">
-      <h1 class="glitch" data-text="بوابة الأدمن">بوابة الأدمن</h1>
-      <div class="card" style="margin-top:24px;">
-        <label class="muted">باسورد الأدمن</label>
-        <input id="admin-password" type="password" class="input" placeholder="••••••">
-        <button id="btn-gate" class="btn">دخول</button>
-        <p id="gate-error" class="muted hidden" style="color:#ff5a5a; margin-top:10px;">باسورد غلط.</p>
-      </div>
-    </section>
+        <!-- تاب النقاط -->
+        <div id="tab-points" class="tab fade-in" style="margin-top: 26px">
+          <div class="card">
+            <label class="muted">اختر المجموعة</label>
+            <select id="group-select" class="input"></select>
 
-    <!-- لوحة الأدمن -->
-    <section id="panel" class="hidden">
-      <h1 class="glitch" data-text="لوحة الأدمن">لوحة الأدمن</h1>
+            <p class="muted" style="margin-top: 14px">
+              السكور الحالي: <span id="current-score">--</span>
+            </p>
 
-      <div class="row" style="justify-content:center; gap:8px; flex-wrap:wrap; margin-top:14px;">
-        <button class="btn ghost tab-btn" data-tab="tab-points">النقاط</button>
-        <button class="btn ghost tab-btn" data-tab="tab-tasks">المهام</button>
-        <button class="btn ghost tab-btn" data-tab="tab-users">المستخدمين</button>
-        <button class="btn ghost tab-btn" data-tab="tab-lecturers">المحاضرين</button>
-        <button class="btn ghost tab-btn" data-tab="tab-settings">الإعدادات</button>
-      </div>
+            <div
+              id="shapes-buttons"
+              class="grid grid-3"
+              style="margin-top: 14px"></div>
 
-      <!-- تاب النقاط -->
-      <div id="tab-points" class="tab fade-in" style="margin-top:26px;">
-        <div class="card">
-          <label class="muted">اختر المجموعة</label>
-          <select id="group-select" class="input"></select>
+            <div class="row" style="margin-top: 20px">
+              <input
+                id="custom-points"
+                type="number"
+                class="input"
+                placeholder="نقاط مخصصة (+/-)" />
+              <button
+                id="btn-custom-points"
+                class="btn"
+                style="width: auto; white-space: nowrap">
+                تطبيق
+              </button>
+            </div>
+          </div>
 
-          <p class="muted" style="margin-top:14px;">السكور الحالي: <span id="current-score">--</span></p>
+          <h2 style="margin-top: 36px">كل المجموعات</h2>
+          <table id="groups-table">
+            <thead>
+              <tr>
+                <th>المجموعة</th>
+                <th>السكور</th>
+                <th>المؤشر</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <!-- مودال التحكم الدقيق في المؤشر -->
+          <div
+            id="indicator-modal"
+            class="hidden"
+            style="
+              position: fixed;
+              inset: 0;
+              background: rgba(0, 0, 0, 0.8);
+              z-index: 300;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 20px;
+            ">
+            <div class="card" style="max-width: 400px; width: 100%">
+              <h2 style="margin-top: 0">
+                مؤشر: <span id="modal-group-name"></span>
+              </h2>
 
-          <div id="shapes-buttons" class="grid grid-3" style="margin-top:14px;"></div>
+              <div style="text-align: center; margin: 18px 0 8px">
+                <div
+                  class="indicator-label"
+                  id="modal-indicator-label"
+                  style="display: inline-block">
+                  --
+                </div>
+              </div>
 
-          <div class="row" style="margin-top:20px;">
-            <input id="custom-points" type="number" class="input" placeholder="نقاط مخصصة (+/-)">
-            <button id="btn-custom-points" class="btn" style="width:auto; white-space:nowrap;">تطبيق</button>
+              <!-- شريط سلايدر -->
+              <input
+                type="range"
+                id="indicator-slider"
+                min="0"
+                max="100"
+                value="90"
+                style="
+                  width: 100%;
+                  accent-color: var(--ember);
+                  cursor: pointer;
+                  margin: 10px 0;
+                " />
+              <p
+                class="muted"
+                style="text-align: center; margin-top: 0"
+                id="slider-val-label">
+                القيمة: 90
+              </p>
+
+              <!-- أزرار اختصار -->
+              <div class="grid-3 grid" style="margin-top: 14px; gap: 8px">
+                <button
+                  class="preset-btn"
+                  data-val="97"
+                  style="
+                    background: rgba(255, 51, 51, 0.3);
+                    color: #ff3333;
+                    border: 1px solid #ff3333;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أحمر فوق
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="80"
+                  style="
+                    background: rgba(255, 51, 51, 0.15);
+                    color: #ff6666;
+                    border: 1px solid #ff6666;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أحمر وسط
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="68"
+                  style="
+                    background: rgba(255, 51, 51, 0.08);
+                    color: #ff9999;
+                    border: 1px solid #ff9999;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أحمر تحت
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="62"
+                  style="
+                    background: rgba(232, 148, 58, 0.15);
+                    color: var(--glow);
+                    border: 1px solid var(--glow);
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أصفر فوق
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="50"
+                  style="
+                    background: rgba(232, 148, 58, 0.25);
+                    color: var(--glow);
+                    border: 1px solid var(--glow);
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أصفر وسط
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="36"
+                  style="
+                    background: rgba(232, 148, 58, 0.1);
+                    color: var(--glow);
+                    border: 1px solid var(--glow);
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أصفر تحت
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="28"
+                  style="
+                    background: rgba(34, 197, 94, 0.08);
+                    color: #5eed8a;
+                    border: 1px solid #5eed8a;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أخضر فوق
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="15"
+                  style="
+                    background: rgba(34, 197, 94, 0.2);
+                    color: #22c55e;
+                    border: 1px solid #22c55e;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أخضر وسط
+                </button>
+                <button
+                  class="preset-btn"
+                  data-val="3"
+                  style="
+                    background: rgba(34, 197, 94, 0.35);
+                    color: #16a34a;
+                    border: 1px solid #16a34a;
+                    border-radius: 20px;
+                    padding: 6px 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                  ">
+                  أخضر تحت
+                </button>
+              </div>
+
+              <div class="row" style="margin-top: 18px">
+                <button id="modal-cancel-ind" class="btn ghost">إلغاء</button>
+                <button id="modal-save-ind" class="btn">حفظ</button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <h2 style="margin-top:36px;">كل المجموعات</h2>
-        <table id="groups-table">
-          <thead><tr><th>المجموعة</th><th>السكور</th><th>المؤشر</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+        <!-- تاب المهام -->
+        <div id="tab-tasks" class="tab hidden" style="margin-top: 26px">
+          <div class="card">
+            <h2>إضافة مهمة جديدة</h2>
+            <input
+              id="task-title"
+              class="input"
+              placeholder="عنوان المهمة"
+              style="margin-top: 10px" />
+            <textarea
+              id="task-content"
+              class="input"
+              rows="3"
+              placeholder="المحتوى/الموقع اللي يظهر بعد الفتح"
+              style="margin-top: 10px"></textarea>
 
-      <!-- تاب المهام -->
-      <div id="tab-tasks" class="tab hidden" style="margin-top:26px;">
-        <div class="card">
-          <h2>إضافة مهمة جديدة</h2>
-          <input id="task-title" class="input" placeholder="عنوان المهمة" style="margin-top:10px;">
-          <textarea id="task-content" class="input" rows="3" placeholder="المحتوى/الموقع اللي يظهر بعد الفتح" style="margin-top:10px;"></textarea>
+            <p class="muted" style="margin-top: 14px">
+              لكل عشيرة: رقم الترتيب + الباسورد الخاص بيها (لازم تكتب باسورد لكل
+              عشيرة عايزة تشوف التاسك ده):
+            </p>
+            <div id="task-order-per-group" class="grid"></div>
 
-          <p class="muted" style="margin-top:14px;">لكل عشيرة: رقم الترتيب + الباسورد الخاص بيها (لازم تكتب باسورد لكل عشيرة عايزة تشوف التاسك ده):</p>
-          <div id="task-order-per-group" class="grid"></div>
+            <button id="btn-add-task" class="btn" style="margin-top: 14px">
+              إضافة
+            </button>
+          </div>
 
-          <button id="btn-add-task" class="btn" style="margin-top:14px;">إضافة</button>
+          <h2 style="margin-top: 30px">المهام الحالية</h2>
+          <div id="tasks-admin-list"></div>
         </div>
 
-        <h2 style="margin-top:30px;">المهام الحالية</h2>
-        <div id="tasks-admin-list"></div>
-      </div>
+        <!-- تاب المستخدمين -->
+        <div id="tab-users" class="tab hidden" style="margin-top: 26px">
+          <div class="card">
+            <h2>إضافة مستخدم جديد</h2>
+            <input
+              id="user-name"
+              class="input"
+              placeholder="اسم المستخدم"
+              style="margin-top: 10px" />
+            <select
+              id="user-group"
+              class="input"
+              style="margin-top: 10px"></select>
+            <select id="user-role" class="input" style="margin-top: 10px">
+              <option value="user">يوزر عادي</option>
+              <option value="leader">ليدر</option>
+              <option value="admin">أدمن</option>
+              <option value="lecturer">محاضر</option>
+            </select>
+            <button id="btn-add-user" class="btn">إضافة</button>
+          </div>
 
-      <!-- تاب المستخدمين -->
-      <div id="tab-users" class="tab hidden" style="margin-top:26px;">
-        <div class="card">
-          <h2>إضافة مستخدم جديد</h2>
-          <input id="user-name" class="input" placeholder="اسم المستخدم" style="margin-top:10px;">
-          <select id="user-group" class="input" style="margin-top:10px;"></select>
-          <select id="user-role" class="input" style="margin-top:10px;">
-            <option value="user">يوزر عادي</option>
-            <option value="leader">ليدر</option>
-            <option value="admin">أدمن</option>
-            <option value="lecturer">محاضر</option>
-          </select>
-          <button id="btn-add-user" class="btn">إضافة</button>
+          <h2 style="margin-top: 30px">المستخدمين الحاليين</h2>
+          <table id="users-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>المجموعة</th>
+                <th>الدور</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
 
-        <h2 style="margin-top:30px;">المستخدمين الحاليين</h2>
-        <table id="users-table">
-          <thead><tr><th>الاسم</th><th>المجموعة</th><th>الدور</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+        <!-- تاب الإعدادات -->
+        <div id="tab-settings" class="tab hidden" style="margin-top: 26px">
+          <div class="card">
+            <h2>عتبات المؤشر</h2>
+            <label class="muted">من كذا فأعلى = أخضر</label>
+            <input id="setting-green" type="number" class="input" />
+            <label class="muted" style="margin-top: 10px; display: block"
+              >من كذا فأقل = أحمر</label
+            >
+            <input id="setting-red" type="number" class="input" />
 
-      <!-- تاب الإعدادات -->
-      <div id="tab-settings" class="tab hidden" style="margin-top:26px;">
-        <div class="card">
-          <h2>عتبات المؤشر</h2>
-          <label class="muted">من كذا فأعلى = أخضر</label>
-          <input id="setting-green" type="number" class="input">
-          <label class="muted" style="margin-top:10px; display:block;">من كذا فأقل = أحمر</label>
-          <input id="setting-red" type="number" class="input">
+            <h2 style="margin-top: 24px">أشكال النقاط (3 أشكال)</h2>
+            <div id="shapes-settings"></div>
 
-          <h2 style="margin-top:24px;">أشكال النقاط (3 أشكال)</h2>
-          <div id="shapes-settings"></div>
-
-          <button id="btn-save-settings" class="btn" style="margin-top:18px;">حفظ الإعدادات</button>
+            <button id="btn-save-settings" class="btn" style="margin-top: 18px">
+              حفظ الإعدادات
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- تاب المحاضرين -->
-      <div id="tab-lecturers" class="tab hidden" style="margin-top:26px;">
-        <h2>آخر إرسالات المحاضرين</h2>
-        <p class="muted">بيتحدث لحظياً كل ما محاضر يبعت نقاط.</p>
-        <div id="submissions-feed" style="margin-top:16px;"></div>
-      </div>
-      <div class="center" style="margin-top:34px;">
-        <button id="btn-logout" class="btn ghost">خروج</button>
-      </div>
-    </section>
+        <!-- تاب المحاضرين -->
+        <div id="tab-lecturers" class="tab hidden" style="margin-top: 26px">
+          <h2>آخر إرسالات المحاضرين</h2>
+          <p class="muted">بيتحدث لحظياً كل ما محاضر يبعت نقاط.</p>
+          <div id="submissions-feed" style="margin-top: 16px"></div>
+        </div>
+        <div class="center" style="margin-top: 34px">
+          <button id="btn-logout" class="btn ghost">خروج</button>
+        </div>
+      </section>
+    </div>
 
-  </div>
+    <div id="toast-container"></div>
 
-  <div id="toast-container"></div>
+    <audio id="bg-ambience" loop preload="auto" autoplay>
+      <source src="assets/sounds/ambience.mp3" type="audio/mpeg" />
+    </audio>
 
-  <audio id="bg-ambience" loop preload="auto" autoplay>
-    <source src="assets/sounds/ambience.mp3" type="audio/mpeg">
-  </audio>
-
-  <script type="module" src="js/admin.js"></script>
-  <script type="module">
-    import { startAutoUpdateWatcher } from "./js/version-check.js";
-    startAutoUpdateWatcher();
-  </script>
-</body>
+    <script type="module" src="js/admin.js"></script>
+    <script type="module">
+      import { startAutoUpdateWatcher } from "./js/version-check.js";
+      startAutoUpdateWatcher();
+    </script>
+  </body>
 </html>
