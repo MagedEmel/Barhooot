@@ -61,6 +61,9 @@
           <button class="btn ghost tab-btn" data-tab="tab-users">
             المستخدمين
           </button>
+          <button class="btn ghost tab-btn" data-tab="tab-alerts">
+            التنبيهات
+          </button>
           <button class="btn ghost tab-btn" data-tab="tab-lecturers">
             المحاضرين
           </button>
@@ -362,6 +365,29 @@
           </table>
         </div>
 
+
+        <!-- تاب التنبيهات -->
+        <div id="tab-alerts" class="tab hidden" style="margin-top: 26px">
+          <div class="card">
+            <h2>إرسال تنبيه</h2>
+            <input id="alert-title" class="input" placeholder="عنوان التنبيه" style="margin-top: 10px" />
+            <textarea id="alert-message" class="input" rows="3" placeholder="نص التنبيه" style="margin-top: 10px"></textarea>
+            <select id="alert-target" class="input" style="margin-top: 10px">
+              <option value="all">كل المستخدمين</option>
+            </select>
+            <button id="btn-send-alert" class="btn">إرسال التنبيه</button>
+          </div>
+
+          <div class="card" style="margin-top: 18px">
+            <h2>إظهار العشائر</h2>
+            <p id="reveal-status" class="muted" style="margin-top: 8px">جاري تحميل الحالة...</p>
+            <button id="btn-reveal-groups" class="btn">إظهار العشائر لكل المستخدمين</button>
+          </div>
+
+          <h2 style="margin-top: 30px">آخر التنبيهات</h2>
+          <div id="alerts-admin-list"></div>
+        </div>
+
         <!-- تاب الإعدادات -->
         <div id="tab-settings" class="tab hidden" style="margin-top: 26px">
           <div class="card">
@@ -386,6 +412,9 @@
         <div id="tab-lecturers" class="tab hidden" style="margin-top: 26px">
           <h2>آخر إرسالات المحاضرين</h2>
           <p class="muted">بيتحدث لحظياً كل ما محاضر يبعت نقاط.</p>
+                    <select id="submissions-filter" class="input" style="margin-top: 12px">
+            <option value="all">كل العشائر</option>
+          </select>
           <div id="submissions-feed" style="margin-top: 16px"></div>
         </div>
         <div class="center" style="margin-top: 34px">

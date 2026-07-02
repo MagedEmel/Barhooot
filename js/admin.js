@@ -10,6 +10,7 @@ import {
   getDocs,
   increment,
   onSnapshot,
+  serverTimestamp,
 } from "./firebase-config.js";
 
 const gate = document.getElementById("gate");
@@ -40,6 +41,7 @@ let settingsCache = {
   redThreshold: -10,
   shapes: [],
   adminPassword: "",
+  groupsRevealed: false,
 };
 
 async function checkGate() {
@@ -100,6 +102,8 @@ async function loadGroups() {
       .map((g) => `<option value="${g.id}">${g.id}</option>`)
       .join("");
   }
+  fillAlertTargets();
+  fillSubmissionsFilter();
   if (groupsCache.length) updateCurrentScoreDisplay(groupSelect.value);
 }
 
@@ -408,8 +412,117 @@ btnSaveSettings.addEventListener("click", async () => {
   showToast("تم حفظ الإعدادات");
 });
 
+
 // ------------------------------------------------------------
-// 6) تنبيهات Toast
+// 6) التنبيهات وإظهار العشائر
+// ------------------------------------------------------------
+const alertTitleInp = document.getElementById("alert-title");
+const alertMessageInp = document.getElementById("alert-message");
+const alertTargetSel = document.getElementById("alert-target");
+const btnSendAlert = document.getElementById("btn-send-alert");
+const alertsAdminList = document.getElementById("alerts-admin-list");
+const revealStatus = document.getElementById("reveal-status");
+const btnRevealGroups = document.getElementById("btn-reveal-groups");
+
+function fillAlertTargets() {
+  if (!alertTargetSel) return;
+  const current = alertTargetSel.value || "all";
+  alertTargetSel.innerHTML = '<option value="all">كل المستخدمين</option>' + groupsCache
+    .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
+    .join("");
+  alertTargetSel.value = groupsCache.some((g) => g.id === current) ? current : "all";
+}
+
+function fillSubmissionsFilter() {
+  const filter = document.getElementById("submissions-filter");
+  if (!filter) return;
+  const current = filter.value || "all";
+  filter.innerHTML = '<option value="all">كل العشائر</option>' + groupsCache
+    .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
+    .join("");
+  filter.value = current === "all" || groupsCache.some((g) => g.id === current) ? current : "all";
+}
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>'"]/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[ch]);
+}
+
+async function refreshRevealStatus() {
+  await checkGate();
+  const isRevealed = settingsCache.groupsRevealed === true;
+  if (revealStatus) {
+    revealStatus.textContent = isRevealed
+      ? "العشائر ظاهرة حالياً لكل المستخدمين."
+      : "المستخدمون يرون رسالة انتظار تحديد العشيرة حالياً.";
+  }
+  if (btnRevealGroups) {
+    btnRevealGroups.disabled = false;
+    btnRevealGroups.classList.toggle("danger", isRevealed);
+    btnRevealGroups.textContent = isRevealed
+      ? "إخفاء العشائر عن المستخدمين"
+      : "إظهار العشائر لكل المستخدمين";
+  }
+}
+
+btnRevealGroups?.addEventListener("click", async () => {
+  const nextValue = settingsCache.groupsRevealed !== true;
+  await setDoc(doc(db, "config", "settings"), { groupsRevealed: nextValue }, { merge: true });
+  settingsCache.groupsRevealed = nextValue;
+  await refreshRevealStatus();
+  showToast(nextValue ? "تم إظهار العشائر لكل المستخدمين" : "تم إخفاء العشائر عن المستخدمين");
+});
+
+btnSendAlert?.addEventListener("click", async () => {
+  const title = alertTitleInp.value.trim();
+  const message = alertMessageInp.value.trim();
+  const targetValue = alertTargetSel.value;
+  if (!title && !message) {
+    showToast("اكتب عنوان أو نص التنبيه");
+    return;
+  }
+
+  await addDoc(collection(db, "notifications"), {
+    title: title || "تنبيه",
+    message,
+    target: targetValue === "all" ? "all" : "group",
+    targetGroup: targetValue === "all" ? "" : targetValue,
+    createdAt: serverTimestamp(),
+    createdAtMs: Date.now(),
+  });
+
+  alertTitleInp.value = "";
+  alertMessageInp.value = "";
+  showToast("تم إرسال التنبيه");
+  loadAlertsAdmin();
+});
+
+async function loadAlertsAdmin() {
+  if (!alertsAdminList) return;
+  const snap = await getDocs(collection(db, "notifications"));
+  const alerts = snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0))
+    .slice(0, 12);
+
+  alertsAdminList.innerHTML = alerts.length
+    ? alerts
+        .map((alert) => {
+          const target = alert.target === "all" ? "كل المستخدمين" : `عشيرة ${alert.targetGroup}`;
+          return `<div class="notice-item"><div class="row" style="justify-content:space-between; gap:8px; flex-wrap:wrap;"><strong>${escapeHtml(alert.title)}</strong><span class="tag">${escapeHtml(target)}</span></div><p style="margin:8px 0 0; white-space:pre-wrap;">${escapeHtml(alert.message)}</p></div>`;
+        })
+        .join("")
+    : '<p class="muted">لا توجد تنبيهات بعد.</p>';
+}
+
+
+// ------------------------------------------------------------
+// 7) تنبيهات Toast
 // ------------------------------------------------------------
 function showToast(msg) {
   const t = document.createElement("div");
@@ -421,38 +534,49 @@ function showToast(msg) {
 
 function startSubmissionsFeed() {
   const feedEl = document.getElementById("submissions-feed");
+  const filterEl = document.getElementById("submissions-filter");
   if (!feedEl) return;
-  const { onSnapshot, collection, query, orderBy, limit } =
-    window.__fsExtras || {};
-  // بنستخدم onSnapshot اللي عندنا بالفعل
+  let submissionsCache = [];
+
+  function renderSubmissionsFeed() {
+    const selectedGroup = filterEl?.value || "all";
+    const filtered = selectedGroup === "all"
+      ? submissionsCache
+      : submissionsCache.filter((s) => s.group === selectedGroup);
+
+    feedEl.innerHTML = filtered.length
+      ? filtered
+          .map((s) => {
+            const t = s.createdAt?.toDate?.();
+            const time = t ? t.toLocaleTimeString("ar-EG") : "الآن";
+            return `
+              <div class="card" style="margin-bottom:10px; padding:14px 18px;">
+                <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                  <span style="color:var(--sand); font-weight:700;">${escapeHtml(s.group)}</span>
+                  <span class="tag">${time}</span>
+                </div>
+                <p class="muted" style="margin-top:6px;">${escapeHtml(s.workshop)}</p>
+                <p style="color:var(--green); font-weight:700; margin-top:4px;">+${escapeHtml(s.points)} نقطة</p>
+                <p class="muted" style="font-size:12px;">المحاضر: ${escapeHtml(s.lecturerName)}</p>
+              </div>
+            `;
+          })
+          .join("")
+      : `<p class="muted">لا توجد إرسالات لهذه العشيرة حالياً.</p>`;
+  }
+
+  filterEl?.addEventListener("change", renderSubmissionsFeed);
+
   import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(
     ({ onSnapshot, collection, query, orderBy, limit }) => {
       const q = query(
         collection(db, "submissions"),
         orderBy("createdAt", "desc"),
-        limit(30),
+        limit(60),
       );
       onSnapshot(q, (snap) => {
-        feedEl.innerHTML = snap.empty
-          ? `<p class="muted">لا توجد إرسالات بعد.</p>`
-          : snap.docs
-              .map((d) => {
-                const s = d.data();
-                const t = s.createdAt?.toDate?.();
-                const time = t ? t.toLocaleTimeString("ar-EG") : "الآن";
-                return `
-              <div class="card" style="margin-bottom:10px; padding:14px 18px;">
-                <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px;">
-                  <span style="color:var(--sand); font-weight:700;">${s.group}</span>
-                  <span class="tag">${time}</span>
-                </div>
-                <p class="muted" style="margin-top:6px;">📋 ${s.workshop}</p>
-                <p style="color:var(--green); font-weight:700; margin-top:4px;">+${s.points} نقطة</p>
-                <p class="muted" style="font-size:12px;">المحاضر: ${s.lecturerName}</p>
-              </div>
-            `;
-              })
-              .join("");
+        submissionsCache = snap.docs.map((d) => d.data());
+        renderSubmissionsFeed();
       });
     },
   );
@@ -526,5 +650,8 @@ async function initPanel() {
   renderTaskGroupInputs(taskOrderPerGroupDiv);
   await loadTasksAdmin();
   await loadUsersAdmin();
+  fillAlertTargets();
+  await refreshRevealStatus();
+  await loadAlertsAdmin();
   startSubmissionsFeed();
 }

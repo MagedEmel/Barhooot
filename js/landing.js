@@ -1,13 +1,15 @@
-import { db, collection, getDocs } from "./firebase-config.js";
+import { db, collection, getDocs, doc, getDoc, onSnapshot } from "./firebase-config.js";
 
 const nameInput = document.getElementById("name-input");
 const suggestionsBox = document.getElementById("name-suggestions");
 const btnEnter = document.getElementById("btn-enter");
 const errorMsg = document.getElementById("error-msg");
 const screenSelect = document.getElementById("screen-select");
+const screenPending = document.getElementById("screen-pending");
 const screenWelcome = document.getElementById("screen-welcome");
 const welcomeText = document.getElementById("welcome-text");
 const groupNameEl = document.getElementById("group-name");
+const pendingNameEl = document.getElementById("pending-name");
 const btnContinue = document.getElementById("btn-continue");
 
 const confirmOverlay = document.getElementById("confirm-overlay");
@@ -26,6 +28,8 @@ whispers.play().catch(() => {});
 
 let usersCache = []; // [{id, name, group, role}]
 let selectedUser = null;
+let groupsRevealed = false;
+let revealUnsubscribe = null;
 
 // ------------------------------------------------------------
 // 0) لو الشخص ده دخل قبل كذا من نفس الجهاز، نتخطى شاشة اختيار
@@ -49,6 +53,8 @@ if (remembered) {
 // ------------------------------------------------------------
 async function loadNames() {
   try {
+    const settingsSnap = await getDoc(doc(db, "config", "settings"));
+    groupsRevealed = settingsSnap.exists() ? settingsSnap.data().groupsRevealed === true : false;
     const snap = await getDocs(collection(db, "users"));
     usersCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (e) {
@@ -144,11 +150,29 @@ function proceedEntry(user) {
   localStorage.setItem("clan_user", JSON.stringify(user));
   sessionStorage.setItem("clan_user", JSON.stringify(user));
 
-  showWelcome(user);
+  if (groupsRevealed || user.role === "admin") {
+    showWelcome(user);
+  } else {
+    showPending(user);
+  }
+}
+
+function showPending(user) {
+  screenSelect.classList.add("hidden");
+  screenWelcome.classList.add("hidden");
+  screenPending.classList.remove("hidden");
+  pendingNameEl.textContent = `انتظر يا ${user.name}...`;
+
+  if (revealUnsubscribe) revealUnsubscribe();
+  revealUnsubscribe = onSnapshot(doc(db, "config", "settings"), (snap) => {
+    groupsRevealed = snap.exists() ? snap.data().groupsRevealed === true : false;
+    if (groupsRevealed) showWelcome(user);
+  });
 }
 
 function showWelcome(user) {
   screenSelect.classList.add("hidden");
+  screenPending.classList.add("hidden");
   screenWelcome.classList.remove("hidden");
 
   const txt = `أنت الآن ضمن عشيرة ${user.group}`;

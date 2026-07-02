@@ -5,6 +5,7 @@ ambience.play().catch(()=>{});
 
 const subEl       = document.getElementById("user-sub");
 const markerEl    = document.getElementById("marker");
+const labelEl     = document.getElementById("indicator-label");
 const scorePillEl = document.getElementById("score-pill");
 const btnLogout   = document.getElementById("btn-logout");
 
