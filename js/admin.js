@@ -307,18 +307,119 @@ const userNameInp = document.getElementById("user-name");
 const userGroupInp = document.getElementById("user-group");
 const userRoleSel = document.getElementById("user-role");
 const btnAddUser = document.getElementById("btn-add-user");
-const usersTableBody = document.querySelector("#users-table tbody");
+const usersCardsList    = document.getElementById("users-cards-list");
+const usersFilterGroup  = document.getElementById("users-filter-group");
+const editUserModal     = document.getElementById("edit-user-modal");
+const editUserNameInp   = document.getElementById("edit-user-name");
+const editUserGroupSel  = document.getElementById("edit-user-group");
+const editUserRoleSel   = document.getElementById("edit-user-role");
+const editUserCancel    = document.getElementById("edit-user-cancel");
+const editUserSave      = document.getElementById("edit-user-save");
+
+let allUsersCache = []; // كل اليوزرين
+let editingUserId = null;
+
+// بيرسم السيليكت للفلتر + يملأه بأسماء العشائر
+function refreshUsersFilter() {
+  if (!usersFilterGroup) return;
+  const current = usersFilterGroup.value;
+  usersFilterGroup.innerHTML =
+    '<option value="all">كل العشائر</option>' +
+    groupsCache.map(g => `<option value="${g.id}">${g.id}</option>`).join("");
+  usersFilterGroup.value = (current && groupsCache.some(g => g.id === current)) ? current : "all";
+}
+
+// بيرسم الكروت بناءً على الفلتر الحالي
+function renderUsersCards() {
+  if (!usersCardsList) return;
+  const filterVal = usersFilterGroup ? usersFilterGroup.value : "all";
+  const filtered  = filterVal === "all" ? allUsersCache : allUsersCache.filter(u => u.group === filterVal);
+
+  if (!filtered.length) {
+    usersCardsList.innerHTML = '<p class="muted">لا يوجد مستخدمون.</p>';
+    return;
+  }
+
+  usersCardsList.innerHTML = filtered.map(u => `
+    <div class="user-row-card" style="
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:8px;
+      background:var(--ash); border:1px solid rgba(196,117,42,.18);
+      border-radius:12px; padding:12px 16px; margin-bottom:8px;">
+      <div>
+        <span style="color:var(--sand);font-weight:700;">${u.name}</span>
+        <span class="tag" style="margin-right:8px;">${u.group}</span>
+        <span class="tag">${roleLabel(u.role)}</span>
+      </div>
+      <div class="row" style="gap:6px; margin:0;">
+        <button class="btn ghost compact-btn btn-edit-user" data-id="${u.id}"
+          style="width:auto;margin:0;padding:6px 14px;font-size:12px;">تعديل</button>
+        <button class="btn compact-btn btn-delete-user" data-id="${u.id}" data-name="${u.name}"
+          style="width:auto;margin:0;padding:6px 14px;font-size:12px;
+                 background:rgba(255,51,51,.2);color:#ff3333;border:1px solid #ff3333;">حذف</button>
+      </div>
+    </div>
+  `).join("");
+
+  // أحداث الأزرار
+  usersCardsList.querySelectorAll(".btn-edit-user").forEach(btn => {
+    btn.addEventListener("click", () => openEditModal(btn.dataset.id));
+  });
+  usersCardsList.querySelectorAll(".btn-delete-user").forEach(btn => {
+    btn.addEventListener("click", () => deleteUser(btn.dataset.id, btn.dataset.name));
+  });
+}
 
 async function loadUsersAdmin() {
   const snap = await getDocs(collection(db, "users"));
-  const users = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  usersTableBody.innerHTML = users
-    .map(
-      (u) => `
-    <tr><td>${u.name}</td><td>${u.group}</td><td>${roleLabel(u.role)}</td></tr>
-  `,
-    )
-    .join("");
+  allUsersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  refreshUsersFilter();
+  renderUsersCards();
+}
+
+// ─── فلتر العشيرة ────────────────────────────────────────────
+if (usersFilterGroup) {
+  usersFilterGroup.addEventListener("change", renderUsersCards);
+}
+
+// ─── مودال التعديل ────────────────────────────────────────────
+function openEditModal(userId) {
+  const user = allUsersCache.find(u => u.id === userId);
+  if (!user) return;
+  editingUserId = userId;
+  editUserNameInp.value = user.name;
+  // نملأ سيليكت العشائر في المودال
+  editUserGroupSel.innerHTML = groupsCache.map(g =>
+    `<option value="${g.id}"${g.id === user.group ? " selected" : ""}>${g.id}</option>`
+  ).join("");
+  editUserRoleSel.value = user.role || "user";
+  editUserModal.classList.remove("hidden");
+}
+
+if (editUserCancel) editUserCancel.addEventListener("click", () => editUserModal.classList.add("hidden"));
+
+if (editUserSave) {
+  editUserSave.addEventListener("click", async () => {
+    if (!editingUserId) return;
+    const newName  = editUserNameInp.value.trim();
+    const newGroup = editUserGroupSel.value;
+    const newRole  = editUserRoleSel.value;
+    if (!newName) { showToast("اكتب الاسم"); return; }
+    await updateDoc(doc(db, "users", editingUserId), {
+      name: newName, group: newGroup, role: newRole
+    });
+    editUserModal.classList.add("hidden");
+    showToast("تم تحديث بيانات المستخدم");
+    await loadUsersAdmin();
+  });
+}
+
+// ─── حذف يوزر ─────────────────────────────────────────────────
+async function deleteUser(userId, userName) {
+  if (!confirm(`تأكيد حذف "${userName}" نهائياً؟`)) return;
+  await deleteDoc(doc(db, "users", userId));
+  showToast(`تم حذف ${userName}`);
+  await loadUsersAdmin();
 }
 
 function roleLabel(r) {
@@ -655,3 +756,46 @@ async function initPanel() {
   await loadAlertsAdmin();
   startSubmissionsFeed();
 }
+
+// ============================================================
+//  printGroupsToConsole()
+//  تطبع في الكونسول 4 objects — كل object = عشيرة واحدة
+//  فيها اسم العشيرة + قايمة أسماء أعضاؤها
+//  استدعيها من الكونسول يدوياً: printGroupsToConsole()
+// ============================================================
+
+async function printGroupsToConsole() {
+  // جيب كل المستخدمين من Firestore
+  const snap = await getDocs(collection(db, "users"));
+  const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // جيب كل المجموعات عشان نعرف الترتيب
+  const groupSnap = await getDocs(collection(db, "groups"));
+  const groupIds = groupSnap.docs.map(d => d.id);
+
+  // جمّع المستخدمين لكل مجموعة
+  const grouped = {};
+  groupIds.forEach(gid => { grouped[gid] = []; });
+  users.forEach(u => {
+    if (!grouped[u.group]) grouped[u.group] = [];
+    grouped[u.group].push(u.name);
+  });
+
+  // حوّل لـ array من objects وطبع كل واحد لوحده
+  const entries = Object.entries(grouped);
+  console.log("==============================");
+  console.log(" قائمة العشائر وأعضاؤها");
+  console.log("==============================");
+  entries.forEach(([groupName, members], i) => {
+    const obj = { عشيرة: groupName, الأعضاء: members, عدد_الأعضاء: members.length };
+    console.log(`\n📌 العشيرة ${i + 1}: ${groupName}`);
+    console.table(members.map(name => ({ الاسم: name })));
+    console.log(obj);
+  });
+  console.log("\n==============================");
+  console.log("الكل في object واحد:");
+  console.log(grouped);
+}
+
+// اجعلها متاحة في الكونسول مباشرة
+window.printGroupsToConsole = printGroupsToConsole;

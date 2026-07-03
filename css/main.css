@@ -363,7 +363,7 @@ th{ color: var(--ember); text-transform:uppercase; letter-spacing:1px; font-size
 
 /* -------------------- التنبيهات -------------------- */
 .notify-btn{
-  position: fixed;
+  position: fixed !important;
   top: 18px;
   left: 18px;
   z-index: 120;
@@ -449,3 +449,16 @@ th{ color: var(--ember); text-transform:uppercase; letter-spacing:1px; font-size
   animation: pendingSpin 1.1s linear infinite;
 }
 @keyframes pendingSpin{ to{ transform: rotate(360deg); } }
+
+/* badge أنيميشن */
+@keyframes badgePop {
+  0%   { transform: scale(0); opacity: 0; }
+  70%  { transform: scale(1.25); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* تنبيه غير مقروء */
+.notice-unread {
+  border-right-color: var(--crimson) !important;
+  background: rgba(255,51,51,.06) !important;
+}

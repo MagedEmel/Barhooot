@@ -334,16 +334,9 @@
         <div id="tab-users" class="tab hidden" style="margin-top: 26px">
           <div class="card">
             <h2>إضافة مستخدم جديد</h2>
-            <input
-              id="user-name"
-              class="input"
-              placeholder="اسم المستخدم"
-              style="margin-top: 10px" />
-            <select
-              id="user-group"
-              class="input"
-              style="margin-top: 10px"></select>
-            <select id="user-role" class="input" style="margin-top: 10px">
+            <input id="user-name" class="input" placeholder="اسم المستخدم" style="margin-top:10px;" />
+            <select id="user-group" class="input" style="margin-top:10px;"></select>
+            <select id="user-role" class="input" style="margin-top:10px;">
               <option value="user">يوزر عادي</option>
               <option value="leader">ليدر</option>
               <option value="admin">أدمن</option>
@@ -352,17 +345,35 @@
             <button id="btn-add-user" class="btn">إضافة</button>
           </div>
 
-          <h2 style="margin-top: 30px">المستخدمين الحاليين</h2>
-          <table id="users-table">
-            <thead>
-              <tr>
-                <th>الاسم</th>
-                <th>المجموعة</th>
-                <th>الدور</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <h2 style="margin-top:30px;">المستخدمين الحاليين</h2>
+          <div class="row" style="margin-bottom:12px; gap:10px; flex-wrap:wrap;">
+            <select id="users-filter-group" class="input" style="max-width:280px; margin:0;">
+              <option value="all">كل العشائر</option>
+            </select>
+          </div>
+          <div id="users-cards-list"></div>
+        </div>
+
+        <!-- مودال تعديل يوزر -->
+        <div id="edit-user-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;">
+          <div class="card" style="max-width:400px;width:100%;">
+            <h2 style="margin-top:0;">تعديل بيانات المستخدم</h2>
+            <label class="muted">الاسم</label>
+            <input id="edit-user-name" class="input" style="margin-top:6px;">
+            <label class="muted" style="margin-top:12px;display:block;">العشيرة</label>
+            <select id="edit-user-group" class="input" style="margin-top:6px;"></select>
+            <label class="muted" style="margin-top:12px;display:block;">الدور</label>
+            <select id="edit-user-role" class="input" style="margin-top:6px;">
+              <option value="user">يوزر عادي</option>
+              <option value="leader">ليدر</option>
+              <option value="admin">أدمن</option>
+              <option value="lecturer">محاضر</option>
+            </select>
+            <div class="row" style="margin-top:18px;">
+              <button id="edit-user-cancel" class="btn ghost">إلغاء</button>
+              <button id="edit-user-save" class="btn">حفظ</button>
+            </div>
+          </div>
         </div>
 
 
