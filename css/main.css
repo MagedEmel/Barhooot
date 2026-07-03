@@ -385,6 +385,7 @@ th{ color: var(--ember); text-transform:uppercase; letter-spacing:1px; font-size
   align-items: center;
   justify-content: center;
   gap: 8px;
+  /* overflow: hidden; */
 }
 .notify-btn::before{
   content: "";

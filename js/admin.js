@@ -849,4 +849,5 @@ async function printGroupsToConsole() {
 
 // اجعلها متاحة في الكونسول مباشرة
 window.printGroupsToConsole = printGroupsToConsole;
+
 printGroupsToConsole();
