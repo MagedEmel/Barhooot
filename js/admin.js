@@ -307,14 +307,14 @@ const userNameInp = document.getElementById("user-name");
 const userGroupInp = document.getElementById("user-group");
 const userRoleSel = document.getElementById("user-role");
 const btnAddUser = document.getElementById("btn-add-user");
-const usersCardsList    = document.getElementById("users-cards-list");
-const usersFilterGroup  = document.getElementById("users-filter-group");
-const editUserModal     = document.getElementById("edit-user-modal");
-const editUserNameInp   = document.getElementById("edit-user-name");
-const editUserGroupSel  = document.getElementById("edit-user-group");
-const editUserRoleSel   = document.getElementById("edit-user-role");
-const editUserCancel    = document.getElementById("edit-user-cancel");
-const editUserSave      = document.getElementById("edit-user-save");
+const usersCardsList = document.getElementById("users-cards-list");
+const usersFilterGroup = document.getElementById("users-filter-group");
+const editUserModal = document.getElementById("edit-user-modal");
+const editUserNameInp = document.getElementById("edit-user-name");
+const editUserGroupSel = document.getElementById("edit-user-group");
+const editUserRoleSel = document.getElementById("edit-user-role");
+const editUserCancel = document.getElementById("edit-user-cancel");
+const editUserSave = document.getElementById("edit-user-save");
 
 let allUsersCache = []; // كل اليوزرين
 let editingUserId = null;
@@ -325,22 +325,28 @@ function refreshUsersFilter() {
   const current = usersFilterGroup.value;
   usersFilterGroup.innerHTML =
     '<option value="all">كل العشائر</option>' +
-    groupsCache.map(g => `<option value="${g.id}">${g.id}</option>`).join("");
-  usersFilterGroup.value = (current && groupsCache.some(g => g.id === current)) ? current : "all";
+    groupsCache.map((g) => `<option value="${g.id}">${g.id}</option>`).join("");
+  usersFilterGroup.value =
+    current && groupsCache.some((g) => g.id === current) ? current : "all";
 }
 
 // بيرسم الكروت بناءً على الفلتر الحالي
 function renderUsersCards() {
   if (!usersCardsList) return;
   const filterVal = usersFilterGroup ? usersFilterGroup.value : "all";
-  const filtered  = filterVal === "all" ? allUsersCache : allUsersCache.filter(u => u.group === filterVal);
+  const filtered =
+    filterVal === "all"
+      ? allUsersCache
+      : allUsersCache.filter((u) => u.group === filterVal);
 
   if (!filtered.length) {
     usersCardsList.innerHTML = '<p class="muted">لا يوجد مستخدمون.</p>';
     return;
   }
 
-  usersCardsList.innerHTML = filtered.map(u => `
+  usersCardsList.innerHTML = filtered
+    .map(
+      (u) => `
     <div class="user-row-card" style="
       display:flex; justify-content:space-between; align-items:center;
       flex-wrap:wrap; gap:8px;
@@ -359,20 +365,24 @@ function renderUsersCards() {
                  background:rgba(255,51,51,.2);color:#ff3333;border:1px solid #ff3333;">حذف</button>
       </div>
     </div>
-  `).join("");
+  `,
+    )
+    .join("");
 
   // أحداث الأزرار
-  usersCardsList.querySelectorAll(".btn-edit-user").forEach(btn => {
+  usersCardsList.querySelectorAll(".btn-edit-user").forEach((btn) => {
     btn.addEventListener("click", () => openEditModal(btn.dataset.id));
   });
-  usersCardsList.querySelectorAll(".btn-delete-user").forEach(btn => {
-    btn.addEventListener("click", () => deleteUser(btn.dataset.id, btn.dataset.name));
+  usersCardsList.querySelectorAll(".btn-delete-user").forEach((btn) => {
+    btn.addEventListener("click", () =>
+      deleteUser(btn.dataset.id, btn.dataset.name),
+    );
   });
 }
 
 async function loadUsersAdmin() {
   const snap = await getDocs(collection(db, "users"));
-  allUsersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  allUsersCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   refreshUsersFilter();
   renderUsersCards();
 }
@@ -384,29 +394,40 @@ if (usersFilterGroup) {
 
 // ─── مودال التعديل ────────────────────────────────────────────
 function openEditModal(userId) {
-  const user = allUsersCache.find(u => u.id === userId);
+  const user = allUsersCache.find((u) => u.id === userId);
   if (!user) return;
   editingUserId = userId;
   editUserNameInp.value = user.name;
   // نملأ سيليكت العشائر في المودال
-  editUserGroupSel.innerHTML = groupsCache.map(g =>
-    `<option value="${g.id}"${g.id === user.group ? " selected" : ""}>${g.id}</option>`
-  ).join("");
+  editUserGroupSel.innerHTML = groupsCache
+    .map(
+      (g) =>
+        `<option value="${g.id}"${g.id === user.group ? " selected" : ""}>${g.id}</option>`,
+    )
+    .join("");
   editUserRoleSel.value = user.role || "user";
   editUserModal.classList.remove("hidden");
 }
 
-if (editUserCancel) editUserCancel.addEventListener("click", () => editUserModal.classList.add("hidden"));
+if (editUserCancel)
+  editUserCancel.addEventListener("click", () =>
+    editUserModal.classList.add("hidden"),
+  );
 
 if (editUserSave) {
   editUserSave.addEventListener("click", async () => {
     if (!editingUserId) return;
-    const newName  = editUserNameInp.value.trim();
+    const newName = editUserNameInp.value.trim();
     const newGroup = editUserGroupSel.value;
-    const newRole  = editUserRoleSel.value;
-    if (!newName) { showToast("اكتب الاسم"); return; }
+    const newRole = editUserRoleSel.value;
+    if (!newName) {
+      showToast("اكتب الاسم");
+      return;
+    }
     await updateDoc(doc(db, "users", editingUserId), {
-      name: newName, group: newGroup, role: newRole
+      name: newName,
+      group: newGroup,
+      role: newRole,
     });
     editUserModal.classList.add("hidden");
     showToast("تم تحديث بيانات المستخدم");
@@ -513,7 +534,6 @@ btnSaveSettings.addEventListener("click", async () => {
   showToast("تم حفظ الإعدادات");
 });
 
-
 // ------------------------------------------------------------
 // 6) التنبيهات وإظهار العشائر
 // ------------------------------------------------------------
@@ -528,30 +548,43 @@ const btnRevealGroups = document.getElementById("btn-reveal-groups");
 function fillAlertTargets() {
   if (!alertTargetSel) return;
   const current = alertTargetSel.value || "all";
-  alertTargetSel.innerHTML = '<option value="all">كل المستخدمين</option>' + groupsCache
-    .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
-    .join("");
-  alertTargetSel.value = groupsCache.some((g) => g.id === current) ? current : "all";
+  alertTargetSel.innerHTML =
+    '<option value="all">كل المستخدمين</option>' +
+    groupsCache
+      .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
+      .join("");
+  alertTargetSel.value = groupsCache.some((g) => g.id === current)
+    ? current
+    : "all";
 }
 
 function fillSubmissionsFilter() {
   const filter = document.getElementById("submissions-filter");
   if (!filter) return;
   const current = filter.value || "all";
-  filter.innerHTML = '<option value="all">كل العشائر</option>' + groupsCache
-    .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
-    .join("");
-  filter.value = current === "all" || groupsCache.some((g) => g.id === current) ? current : "all";
+  filter.innerHTML =
+    '<option value="all">كل العشائر</option>' +
+    groupsCache
+      .map((g) => `<option value="${g.id}">عشيرة ${g.id}</option>`)
+      .join("");
+  filter.value =
+    current === "all" || groupsCache.some((g) => g.id === current)
+      ? current
+      : "all";
 }
 
 function escapeHtml(value) {
-  return String(value || "").replace(/[&<>'"]/g, (ch) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "'": "&#39;",
-    '"': "&quot;",
-  })[ch]);
+  return String(value || "").replace(
+    /[&<>'"]/g,
+    (ch) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[ch],
+  );
 }
 
 async function refreshRevealStatus() {
@@ -573,10 +606,18 @@ async function refreshRevealStatus() {
 
 btnRevealGroups?.addEventListener("click", async () => {
   const nextValue = settingsCache.groupsRevealed !== true;
-  await setDoc(doc(db, "config", "settings"), { groupsRevealed: nextValue }, { merge: true });
+  await setDoc(
+    doc(db, "config", "settings"),
+    { groupsRevealed: nextValue },
+    { merge: true },
+  );
   settingsCache.groupsRevealed = nextValue;
   await refreshRevealStatus();
-  showToast(nextValue ? "تم إظهار العشائر لكل المستخدمين" : "تم إخفاء العشائر عن المستخدمين");
+  showToast(
+    nextValue
+      ? "تم إظهار العشائر لكل المستخدمين"
+      : "تم إخفاء العشائر عن المستخدمين",
+  );
 });
 
 btnSendAlert?.addEventListener("click", async () => {
@@ -614,13 +655,15 @@ async function loadAlertsAdmin() {
   alertsAdminList.innerHTML = alerts.length
     ? alerts
         .map((alert) => {
-          const target = alert.target === "all" ? "كل المستخدمين" : `عشيرة ${alert.targetGroup}`;
+          const target =
+            alert.target === "all"
+              ? "كل المستخدمين"
+              : `عشيرة ${alert.targetGroup}`;
           return `<div class="notice-item"><div class="row" style="justify-content:space-between; gap:8px; flex-wrap:wrap;"><strong>${escapeHtml(alert.title)}</strong><span class="tag">${escapeHtml(target)}</span></div><p style="margin:8px 0 0; white-space:pre-wrap;">${escapeHtml(alert.message)}</p></div>`;
         })
         .join("")
     : '<p class="muted">لا توجد تنبيهات بعد.</p>';
 }
-
 
 // ------------------------------------------------------------
 // 7) تنبيهات Toast
@@ -641,9 +684,10 @@ function startSubmissionsFeed() {
 
   function renderSubmissionsFeed() {
     const selectedGroup = filterEl?.value || "all";
-    const filtered = selectedGroup === "all"
-      ? submissionsCache
-      : submissionsCache.filter((s) => s.group === selectedGroup);
+    const filtered =
+      selectedGroup === "all"
+        ? submissionsCache
+        : submissionsCache.filter((s) => s.group === selectedGroup);
 
     feedEl.innerHTML = filtered.length
       ? filtered
@@ -767,16 +811,18 @@ async function initPanel() {
 async function printGroupsToConsole() {
   // جيب كل المستخدمين من Firestore
   const snap = await getDocs(collection(db, "users"));
-  const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const users = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
   // جيب كل المجموعات عشان نعرف الترتيب
   const groupSnap = await getDocs(collection(db, "groups"));
-  const groupIds = groupSnap.docs.map(d => d.id);
+  const groupIds = groupSnap.docs.map((d) => d.id);
 
   // جمّع المستخدمين لكل مجموعة
   const grouped = {};
-  groupIds.forEach(gid => { grouped[gid] = []; });
-  users.forEach(u => {
+  groupIds.forEach((gid) => {
+    grouped[gid] = [];
+  });
+  users.forEach((u) => {
     if (!grouped[u.group]) grouped[u.group] = [];
     grouped[u.group].push(u.name);
   });
@@ -787,9 +833,13 @@ async function printGroupsToConsole() {
   console.log(" قائمة العشائر وأعضاؤها");
   console.log("==============================");
   entries.forEach(([groupName, members], i) => {
-    const obj = { عشيرة: groupName, الأعضاء: members, عدد_الأعضاء: members.length };
+    const obj = {
+      عشيرة: groupName,
+      الأعضاء: members,
+      عدد_الأعضاء: members.length,
+    };
     console.log(`\n📌 العشيرة ${i + 1}: ${groupName}`);
-    console.table(members.map(name => ({ الاسم: name })));
+    console.table(members.map((name) => ({ الاسم: name })));
     console.log(obj);
   });
   console.log("\n==============================");
@@ -799,3 +849,4 @@ async function printGroupsToConsole() {
 
 // اجعلها متاحة في الكونسول مباشرة
 window.printGroupsToConsole = printGroupsToConsole;
+printGroupsToConsole();
