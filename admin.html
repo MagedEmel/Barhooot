@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="css/main.css" />
     <link
       rel="icon"
-      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png" />
+      href="assets/ChatGPT Image Jun 23, 2026, 01_26_16 PM.png"
+    />
   </head>
   <body>
     <div class="vignette"></div>
@@ -31,12 +32,14 @@
             id="admin-password"
             type="password"
             class="input"
-            placeholder="••••••" />
+            placeholder="••••••"
+          />
           <button id="btn-gate" class="btn">دخول</button>
           <p
             id="gate-error"
             class="muted hidden"
-            style="color: #ff5a5a; margin-top: 10px">
+            style="color: #ff5a5a; margin-top: 10px"
+          >
             باسورد غلط.
           </p>
         </div>
@@ -53,7 +56,8 @@
             gap: 8px;
             flex-wrap: wrap;
             margin-top: 14px;
-          ">
+          "
+        >
           <button class="btn ghost tab-btn" data-tab="tab-points">
             النقاط
           </button>
@@ -85,18 +89,21 @@
             <div
               id="shapes-buttons"
               class="grid grid-3"
-              style="margin-top: 14px"></div>
+              style="margin-top: 14px"
+            ></div>
 
             <div class="row" style="margin-top: 20px">
               <input
                 id="custom-points"
                 type="number"
                 class="input"
-                placeholder="نقاط مخصصة (+/-)" />
+                placeholder="نقاط مخصصة (+/-)"
+              />
               <button
                 id="btn-custom-points"
                 class="btn"
-                style="width: auto; white-space: nowrap">
+                style="width: auto; white-space: nowrap"
+              >
                 تطبيق
               </button>
             </div>
@@ -126,7 +133,8 @@
               align-items: center;
               justify-content: center;
               padding: 20px;
-            ">
+            "
+          >
             <div class="card" style="max-width: 400px; width: 100%">
               <h2 style="margin-top: 0">
                 مؤشر: <span id="modal-group-name"></span>
@@ -136,7 +144,8 @@
                 <div
                   class="indicator-label"
                   id="modal-indicator-label"
-                  style="display: inline-block">
+                  style="display: inline-block"
+                >
                   --
                 </div>
               </div>
@@ -153,11 +162,13 @@
                   accent-color: var(--ember);
                   cursor: pointer;
                   margin: 10px 0;
-                " />
+                "
+              />
               <p
                 class="muted"
                 style="text-align: center; margin-top: 0"
-                id="slider-val-label">
+                id="slider-val-label"
+              >
                 القيمة: 90
               </p>
 
@@ -174,7 +185,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أحمر فوق
                 </button>
                 <button
@@ -188,7 +200,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أحمر وسط
                 </button>
                 <button
@@ -202,7 +215,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أحمر تحت
                 </button>
                 <button
@@ -216,7 +230,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أصفر فوق
                 </button>
                 <button
@@ -230,7 +245,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أصفر وسط
                 </button>
                 <button
@@ -244,7 +260,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أصفر تحت
                 </button>
                 <button
@@ -258,7 +275,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أخضر فوق
                 </button>
                 <button
@@ -272,7 +290,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أخضر وسط
                 </button>
                 <button
@@ -286,7 +305,8 @@
                     padding: 6px 4px;
                     cursor: pointer;
                     font-size: 12px;
-                  ">
+                  "
+                >
                   أخضر تحت
                 </button>
               </div>
@@ -307,13 +327,15 @@
               id="task-title"
               class="input"
               placeholder="عنوان المهمة"
-              style="margin-top: 10px" />
+              style="margin-top: 10px"
+            />
             <textarea
               id="task-content"
               class="input"
               rows="3"
               placeholder="المحتوى/الموقع اللي يظهر بعد الفتح"
-              style="margin-top: 10px"></textarea>
+              style="margin-top: 10px"
+            ></textarea>
 
             <p class="muted" style="margin-top: 14px">
               لكل عشيرة: رقم الترتيب + الباسورد الخاص بيها (لازم تكتب باسورد لكل
@@ -334,9 +356,18 @@
         <div id="tab-users" class="tab hidden" style="margin-top: 26px">
           <div class="card">
             <h2>إضافة مستخدم جديد</h2>
-            <input id="user-name" class="input" placeholder="اسم المستخدم" style="margin-top:10px;" />
-            <select id="user-group" class="input" style="margin-top:10px;"></select>
-            <select id="user-role" class="input" style="margin-top:10px;">
+            <input
+              id="user-name"
+              class="input"
+              placeholder="اسم المستخدم"
+              style="margin-top: 10px"
+            />
+            <select
+              id="user-group"
+              class="input"
+              style="margin-top: 10px"
+            ></select>
+            <select id="user-role" class="input" style="margin-top: 10px">
               <option value="user">يوزر عادي</option>
               <option value="leader">ليدر</option>
               <option value="admin">أدمن</option>
@@ -345,9 +376,16 @@
             <button id="btn-add-user" class="btn">إضافة</button>
           </div>
 
-          <h2 style="margin-top:30px;">المستخدمين الحاليين</h2>
-          <div class="row" style="margin-bottom:12px; gap:10px; flex-wrap:wrap;">
-            <select id="users-filter-group" class="input" style="max-width:280px; margin:0;">
+          <h2 style="margin-top: 30px">المستخدمين الحاليين</h2>
+          <div
+            class="row"
+            style="margin-bottom: 12px; gap: 10px; flex-wrap: wrap"
+          >
+            <select
+              id="users-filter-group"
+              class="input"
+              style="max-width: 280px; margin: 0"
+            >
               <option value="all">كل العشائر</option>
             </select>
           </div>
@@ -355,34 +393,65 @@
         </div>
 
         <!-- مودال تعديل يوزر -->
-        <div id="edit-user-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;">
-          <div class="card" style="max-width:400px;width:100%;">
-            <h2 style="margin-top:0;">تعديل بيانات المستخدم</h2>
+        <div
+          id="edit-user-modal"
+          class="hidden"
+          style="
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+          "
+        >
+          <div class="card" style="max-width: 400px; width: 100%">
+            <h2 style="margin-top: 0">تعديل بيانات المستخدم</h2>
             <label class="muted">الاسم</label>
-            <input id="edit-user-name" class="input" style="margin-top:6px;">
-            <label class="muted" style="margin-top:12px;display:block;">العشيرة</label>
-            <select id="edit-user-group" class="input" style="margin-top:6px;"></select>
-            <label class="muted" style="margin-top:12px;display:block;">الدور</label>
-            <select id="edit-user-role" class="input" style="margin-top:6px;">
+            <input id="edit-user-name" class="input" style="margin-top: 6px" />
+            <label class="muted" style="margin-top: 12px; display: block"
+              >العشيرة</label
+            >
+            <select
+              id="edit-user-group"
+              class="input"
+              style="margin-top: 6px"
+            ></select>
+            <label class="muted" style="margin-top: 12px; display: block"
+              >الدور</label
+            >
+            <select id="edit-user-role" class="input" style="margin-top: 6px">
               <option value="user">يوزر عادي</option>
               <option value="leader">ليدر</option>
               <option value="admin">أدمن</option>
               <option value="lecturer">محاضر</option>
             </select>
-            <div class="row" style="margin-top:18px;">
+            <div class="row" style="margin-top: 18px">
               <button id="edit-user-cancel" class="btn ghost">إلغاء</button>
               <button id="edit-user-save" class="btn">حفظ</button>
             </div>
           </div>
         </div>
 
-
         <!-- تاب التنبيهات -->
         <div id="tab-alerts" class="tab hidden" style="margin-top: 26px">
           <div class="card">
             <h2>إرسال تنبيه</h2>
-            <input id="alert-title" class="input" placeholder="عنوان التنبيه" style="margin-top: 10px" />
-            <textarea id="alert-message" class="input" rows="3" placeholder="نص التنبيه" style="margin-top: 10px"></textarea>
+            <input
+              id="alert-title"
+              class="input"
+              placeholder="عنوان التنبيه"
+              style="margin-top: 10px"
+            />
+            <textarea
+              id="alert-message"
+              class="input"
+              rows="3"
+              placeholder="نص التنبيه"
+              style="margin-top: 10px"
+            ></textarea>
             <select id="alert-target" class="input" style="margin-top: 10px">
               <option value="all">كل المستخدمين</option>
             </select>
@@ -391,8 +460,12 @@
 
           <div class="card" style="margin-top: 18px">
             <h2>إظهار العشائر</h2>
-            <p id="reveal-status" class="muted" style="margin-top: 8px">جاري تحميل الحالة...</p>
-            <button id="btn-reveal-groups" class="btn">إظهار العشائر لكل المستخدمين</button>
+            <p id="reveal-status" class="muted" style="margin-top: 8px">
+              جاري تحميل الحالة...
+            </p>
+            <button id="btn-reveal-groups" class="btn">
+              إظهار العشائر لكل المستخدمين
+            </button>
           </div>
 
           <h2 style="margin-top: 30px">آخر التنبيهات</h2>
@@ -423,13 +496,28 @@
         <div id="tab-lecturers" class="tab hidden" style="margin-top: 26px">
           <h2>آخر إرسالات المحاضرين</h2>
           <p class="muted">بيتحدث لحظياً كل ما محاضر يبعت نقاط.</p>
-                    <select id="submissions-filter" class="input" style="margin-top: 12px">
+          <select
+            id="submissions-filter"
+            class="input"
+            style="margin-top: 12px"
+          >
             <option value="all">كل العشائر</option>
           </select>
           <div id="submissions-feed" style="margin-top: 16px"></div>
         </div>
         <div class="center" style="margin-top: 34px">
-          <button id="btn-logout" class="btn ghost">خروج</button>
+          <!-- <button id="btn-logout" class="btn ghost">خروج</button> -->
+          <button
+            id="btn-switch-account"
+            class="btn ghost"
+            style="
+              margin-top: 8px;
+              border-color: var(--ember);
+              color: var(--ember);
+            "
+          >
+            تسجيل الدخول بحساب آخر
+          </button>
         </div>
       </section>
     </div>

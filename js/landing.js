@@ -37,12 +37,13 @@ let revealUnsubscribe = null;
 //    يقدر يفتح الصفحة تاني ويتفرج على قايمة أسماء/تيمات الناس التانية
 // ------------------------------------------------------------
 const remembered = localStorage.getItem("clan_user");
-
-if (remembered) {
-  // selectedUser = JSON.parse(remembered);
-  // sessionStorage.setItem("clan_user", remembered);
-  // showWelcome(selectedUser);
-  loadNames();
+// لو الأدمن داخل يغير حساب، مش نتخطى شاشة الاختيار
+const adminMode = localStorage.getItem("clan_admin_mode") === "1";
+if (remembered && !adminMode) {
+  selectedUser = JSON.parse(remembered);
+  sessionStorage.setItem("clan_user", remembered);
+  showWelcome(selectedUser);
+  // loadNames();
 } else {
   loadNames();
 }

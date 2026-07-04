@@ -70,10 +70,17 @@ adminPassInp.addEventListener("keydown", (e) => {
   if (e.key === "Enter") btnGate.click();
 });
 
-btnLogout.addEventListener(
-  "click",
-  () => (window.location.href = "index.html"),
-);
+// btnLogout.addEventListener(
+//   "click",
+//   () => (window.location.href = "index.html"),
+// );
+document.getElementById("btn-switch-account").addEventListener("click", () => {
+  if (!confirm("هتمسح الحساب المحفوظ على الجهاز ده وترجع لصفحة الاختيار. متأكد؟")) return;
+  localStorage.removeItem("clan_user");
+  sessionStorage.removeItem("clan_user");
+  localStorage.setItem("clan_admin_mode", "1"); // flag عشان يقدر يرجع
+  window.location.href = "index.html";
+});
 
 // ------------------------------------------------------------
 // 2) تاب النقاط
