@@ -43,11 +43,10 @@ if (remembered && !adminMode) {
   selectedUser = JSON.parse(remembered);
   sessionStorage.setItem("clan_user", remembered);
   showWelcome(selectedUser);
-  // loadNames();
 } else {
   loadNames();
 }
-
+ 
 // ------------------------------------------------------------
 // 1) تحميل كل الأسماء من فاير بيز عشان الاقتراحات (datalist)
 //    (بيحصل بس لو الشخص بيدخل لأول مرة من الجهاز ده)
